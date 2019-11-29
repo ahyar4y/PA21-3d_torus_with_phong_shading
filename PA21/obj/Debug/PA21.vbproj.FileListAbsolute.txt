@@ -1,0 +1,11 @@
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.vbprojAssemblyReference.cache
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.Form1.resources
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.Resources.resources
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.vbproj.GenerateResource.cache
+C:\Users\ahyar\source\repos\PA21\PA21\bin\Debug\PA21.exe.config
+C:\Users\ahyar\source\repos\PA21\PA21\bin\Debug\PA21.exe
+C:\Users\ahyar\source\repos\PA21\PA21\bin\Debug\PA21.pdb
+C:\Users\ahyar\source\repos\PA21\PA21\bin\Debug\PA21.xml
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.exe
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.xml
+C:\Users\ahyar\source\repos\PA21\PA21\obj\Debug\PA21.pdb
