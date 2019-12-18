@@ -15,13 +15,11 @@
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         torus = New Torus3D(centerX, centerY, centerZ, CDbl(NumericUpDown1.Text), CDbl(NumericUpDown2.Text), CInt(NumericUpDown3.Text), CInt(NumericUpDown4.Text))
 
-        DrawObject(img, torus.center, torus.mesh, torus.m, torus.n, viewVector)
+        DrawObject(img, torus, viewVector)
         'InsertRowMatrix(wMatrix, 0, 1, 0, 0, 0)
         'InsertRowMatrix(wMatrix, 1, 0, 1, 0, 0)
         'InsertRowMatrix(wMatrix, 2, 0, 0, 1, 0)
         'InsertRowMatrix(wMatrix, 3, 0, 0, 0, 1)
-
-
 
         'InsertRowMatrix(vMatrix, 0, 1, 0, 0, 0)
         'InsertRowMatrix(vMatrix, 1, 0, 1, 0, 0)
@@ -47,17 +45,17 @@
         SetMatrixRow(rMatrix, 2, Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180) + -Math.Sin(rX * Math.PI / 180) * -Math.Sin(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Sin(rZ * Math.PI / 180) + -Math.Sin(rX * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Cos(rY * Math.PI / 180), 0)
         SetMatrixRow(rMatrix, 3, 0, 0, 0, 1)
 
-        Dim mesh As New Mesh3D(torus.m, torus.n)
+        Dim mesh As Mesh3D = torus.mesh
         For i = 0 To torus.m
             For j = 0 To torus.n
-                mesh.v(i, j).x = CInt(torus.mesh.n(i, j).x * rMatrix(0, 0) + torus.mesh.n(i, j).y * rMatrix(1, 0) + torus.mesh.n(i, j).z * rMatrix(2, 0))
-                mesh.v(i, j).y = CInt(torus.mesh.n(i, j).x * rMatrix(0, 1) + torus.mesh.n(i, j).y * rMatrix(1, 1) + torus.mesh.n(i, j).z * rMatrix(2, 1))
-                mesh.v(i, j).z = CInt(torus.mesh.n(i, j).x * rMatrix(0, 2) + torus.mesh.n(i, j).y * rMatrix(1, 2) + torus.mesh.n(i, j).z * rMatrix(2, 2))
+                mesh.v(i, j).x = CInt((torus.mesh.n(i, j).x) * rMatrix(0, 0) + torus.mesh.n(i, j).y * rMatrix(1, 0) + torus.mesh.n(i, j).z * rMatrix(2, 0))
+                mesh.v(i, j).y = CInt((torus.mesh.n(i, j).x) * rMatrix(0, 1) + torus.mesh.n(i, j).y * rMatrix(1, 1) + torus.mesh.n(i, j).z * rMatrix(2, 1))
+                mesh.v(i, j).z = CInt((torus.mesh.n(i, j).x) * rMatrix(0, 2) + torus.mesh.n(i, j).y * rMatrix(1, 2) + torus.mesh.n(i, j).z * rMatrix(2, 2))
             Next
         Next
         torus.mesh.n = mesh.v
 
-        DrawObject(img, torus.center, torus.mesh, torus.m, torus.n, viewVector)
+        DrawObject(img, torus, viewVector)
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -65,17 +63,21 @@
         Dim tY As Integer = CInt(NumericUpDown9.Text)
         Dim tZ As Integer = CInt(NumericUpDown10.Text)
 
-        Dim mesh As New Mesh3D(torus.m, torus.n)
+        Dim mesh As Mesh3D = torus.mesh
         For i = 0 To torus.m
             For j = 0 To torus.n
                 mesh.v(i, j).x = torus.mesh.n(i, j).x + tX
-                mesh.v(i, j).y = torus.mesh.n(i, j).y + tY
+                mesh.v(i, j).y = torus.mesh.n(i, j).y - tY
                 mesh.v(i, j).z = torus.mesh.n(i, j).z + tZ
             Next
         Next
         torus.mesh.n = mesh.v
 
-        DrawObject(img, torus.center, torus.mesh, torus.m, torus.n, viewVector)
+        torus.center.x += tX
+        torus.center.y -= tY
+        torus.center.z += tZ
+
+        DrawObject(img, torus, viewVector)
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load

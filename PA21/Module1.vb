@@ -81,7 +81,7 @@
 
     Class Torus3D
         Public center As Vector3D
-        Dim majorR, minorR As Double
+        Public majorR, minorR As Double
         Public m, n As Integer
         Public mesh As Mesh3D
 
@@ -139,10 +139,10 @@
         Public pPoint(2) As Vector3D
         Public pEdges(2) As PEdge
         Public pYMin, pYMax As Integer
-        Public pNormal As Vector3D
+        Public vNormal(2) As Vector3D
         Public pColor As Color
 
-        Public Sub New(v0 As Vector3D, v1 As Vector3D, v2 As Vector3D)
+        Public Sub New(torus As Torus3D, v0 As Vector3D, v1 As Vector3D, v2 As Vector3D)
             pPoint = {v0, v1, v2}
 
             pYMax = pPoint(0).y
@@ -158,7 +158,11 @@
                 End If
             Next
 
-            pNormal = ComputeTriangleNormal(v0, v1, v2)
+            vNormal = GetVertexNormal(torus, pPoint)
+
+            For i = 0 To 2
+                Console.WriteLine(vNormal(i).x.ToString + " " + vNormal(i).y.ToString + " " + vNormal(i).z.ToString)
+            Next
 
             'Console.WriteLine("Polygon Y Min: " & pYMin.ToString)
             'Console.WriteLine("Polygon Y Max: " & pYMax.ToString)
@@ -198,7 +202,7 @@
 
     Class SETElmt
         Public yMin, yMax, xYMin, dx, dy, carry As Integer
-        Public pNormal, vNormal As Vector3D
+        Public vNormal As Vector3D
         Public SETNext As SETElmt
     End Class
 
@@ -276,7 +280,6 @@
             .dx = p.pEdges(i).dx,
             .dy = p.pEdges(i).dy,
             .carry = 0,
-            .pNormal = p.pNormal,
             .vNormal = Nothing
         }
 
@@ -328,12 +331,8 @@
             cur = AEL
 
             While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
-                img.DrawLine(New Pen(Color.LightBlue), CInt(cur.xYMin + center.x), -CInt(i + pNew.pYMin) + CInt(center.y), CInt(cur.SETNext.xYMin + center.x), -CInt(i + pNew.pYMin) + CInt(center.y))
+                img.DrawLine(New Pen(Color.LightBlue), CInt(cur.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), CInt(cur.SETNext.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y))
                 'Console.WriteLine(i.ToString + " " + (i + pNew.pYMin).ToString + " | " + cur.yMax.ToString + " " + cur.xYMin.ToString + " " + cur.dx.ToString + " " + cur.dy.ToString + " " + cur.carry.ToString + " || " + cur.SETNext.yMax.ToString + " " + cur.SETNext.xYMin.ToString + " " + cur.SETNext.dx.ToString + " " + cur.SETNext.dy.ToString + " " + cur.SETNext.carry.ToString)
-
-                'For j = cur.xYMin To cur.SETNext.xYMin
-                '    GetNormalVertex(j, i + pNew.pYMin)
-                'Next
 
                 cur = cur.SETNext.SETNext
             End While
@@ -422,11 +421,20 @@
         Return sorted
     End Function
 
-    Sub GetNormalVertex(x)
+    Function GetVertexNormal(torus As Torus3D, v() As Vector3D) As Vector3D()
+        Dim vNormal(2) As Vector3D
 
-    End Sub
+        For i = 0 To 2
+            vNormal(i) = New Vector3D
+            vNormal(i).x = (v(i).x - torus.majorR) / torus.minorR
+            vNormal(i).y = (v(i).y - torus.majorR) / torus.minorR
+            vNormal(i).z = (v(i).z - torus.majorR) / torus.minorR
+        Next
 
-    Sub DrawObject(img As Graphics, center As Vector3D, mesh As Mesh3D, m As Integer, n As Integer, viewVector As Vector3D)
+        Return vNormal
+    End Function
+
+    Sub DrawObject(img As Graphics, torus As Torus3D, viewVector As Vector3D)
         Dim i, j As Integer
         Dim v0, v1, v2 As Vector3D
         Dim p As PolygonData
@@ -434,30 +442,30 @@
         Dim triangleNormal As Vector3D
 
         img.Clear(Color.White)
-        For i = 0 To m - 1
-            For j = 0 To n - 1
-                v0 = mesh.n(i, j)
-                v1 = mesh.n(i, j + 1)
-                v2 = mesh.n(i + 1, j + 1)
+        For i = 0 To torus.m - 1
+            For j = 0 To torus.n - 1
+                v0 = torus.mesh.n(i, j)
+                v1 = torus.mesh.n(i, j + 1)
+                v2 = torus.mesh.n(i + 1, j + 1)
                 triangleNormal = ComputeTriangleNormal(v0, v1, v2)
 
                 If Not BackFaceCulling(viewVector, triangleNormal) Then
-                    p = New PolygonData(v0, v1, v2)
+                    p = New PolygonData(torus, v0, v1, v2)
 
-                    CreateSET(img, center, p)
-                    DrawTriangle(img, center, v0, v1, v2)
+                    CreateSET(img, torus.center, p)
+                    DrawTriangle(img, torus.center, v0, v1, v2)
                 End If
 
-                v0 = mesh.n(i, j)
-                v1 = mesh.n(i + 1, j + 1)
-                v2 = mesh.n(i + 1, j)
+                v0 = torus.mesh.n(i, j)
+                v1 = torus.mesh.n(i + 1, j + 1)
+                v2 = torus.mesh.n(i + 1, j)
                 triangleNormal = ComputeTriangleNormal(v0, v1, v2)
 
                 If Not BackFaceCulling(viewVector, triangleNormal) Then
-                    p = New PolygonData(v0, v1, v2)
+                    p = New PolygonData(torus, v0, v1, v2)
 
-                    CreateSET(img, center, p)
-                    DrawTriangle(img, center, v0, v1, v2)
+                    CreateSET(img, torus.center, p)
+                    DrawTriangle(img, torus.center, v0, v1, v2)
                 End If
             Next
         Next
