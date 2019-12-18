@@ -2,51 +2,86 @@
     Dim img As Graphics
     Dim wMatrix(3, 3), rMatrix(3, 3), vMatrix(3, 3), sMatrix(3, 3) As Double
     Dim torus As Torus3D
+    Dim viewVector As New Vector3D(0.0, 0.0, 1.0)
+    Dim centerX As Integer
+    Dim centerY As Integer
+    Dim centerZ As Integer
 
     Private Sub PictureBox1_MouseMove(sender As Object, e As MouseEventArgs) Handles PictureBox1.MouseMove
-        Label5.Text = "X: " + e.X.ToString
-        Label6.Text = "Y: " + e.Y.ToString
+        Label5.Text = "X: " + (e.X - centerX).ToString
+        Label6.Text = "Y: " + (-1 * (e.Y - centerY)).ToString
     End Sub
 
-    Dim centerX, centerY, centerZ, rX, rY, rZ As Double
-
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        rX = CDbl(NumericUpDown5.Text)
-        rY = CDbl(NumericUpDown6.Text)
-        rZ = CDbl(NumericUpDown7.Text)
-        centerX = PictureBox1.Width / 2
-        centerY = PictureBox1.Height / 2
-        centerZ = 0
-
         torus = New Torus3D(centerX, centerY, centerZ, CDbl(NumericUpDown1.Text), CDbl(NumericUpDown2.Text), CInt(NumericUpDown3.Text), CInt(NumericUpDown4.Text))
-        Dim viewVector As New Vector3D(0.0, 0.0, 1.0)
 
-        DrawObject(img, torus.mesh, torus.m, torus.n, viewVector)
-        'InsertColumnMatrix(wMatrix, 0, 1, 0, 0, 0)
-        'InsertColumnMatrix(wMatrix, 1, 0, 1, 0, 0)
-        'InsertColumnMatrix(wMatrix, 2, 0, 0, 1, 0)
-        'InsertColumnMatrix(wMatrix, 3, 0, 0, 0, 1)
+        DrawObject(img, torus.center, torus.mesh, torus.m, torus.n, viewVector)
+        'InsertRowMatrix(wMatrix, 0, 1, 0, 0, 0)
+        'InsertRowMatrix(wMatrix, 1, 0, 1, 0, 0)
+        'InsertRowMatrix(wMatrix, 2, 0, 0, 1, 0)
+        'InsertRowMatrix(wMatrix, 3, 0, 0, 0, 1)
 
-        InsertColumnMatrix(rMatrix, 0, Math.Cos(rZ * Math.PI / 180) * Math.Cos(rY * Math.PI / 180) + Math.Sin(rZ * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Sin(rX * Math.PI / 180), -Math.Sin(rZ * Math.PI / 180) * Math.Cos(rY * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Sin(rX * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180), 0)
-        InsertColumnMatrix(rMatrix, 1, Math.Sin(rZ * Math.PI / 180) * Math.Cos(rX * Math.PI / 180), Math.Cos(rZ * Math.PI / 180) * Math.Cos(rX * Math.PI / 180), -Math.Sin(rX * Math.PI / 180), 0)
-        InsertColumnMatrix(rMatrix, 2, Math.Cos(rZ * Math.PI / 180) * -Math.Sin(rY * Math.PI / 180) + Math.Sin(rZ * Math.PI / 180) * Math.Cos(rY * Math.PI / 180) * Math.Sin(rX * Math.PI / 180), -Math.Sin(rZ * Math.PI / 180) * -Math.Sin(rY * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180) * Math.Cos(rY * Math.PI / 180) * Math.Sin(rX * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180), 0)
-        InsertColumnMatrix(rMatrix, 3, 0, 0, 0, 1)
 
-        InsertColumnMatrix(vMatrix, 0, 1, 0, 0, 0)
-        InsertColumnMatrix(vMatrix, 1, 0, 1, 0, 0)
-        InsertColumnMatrix(vMatrix, 2, 0, 0, 0, 0)
-        InsertColumnMatrix(vMatrix, 3, 0, 0, 0, 1)
 
-        InsertColumnMatrix(sMatrix, 0, 1, 0, 0, PictureBox1.Width / 2)
-        InsertColumnMatrix(sMatrix, 1, 0, 1, 0, PictureBox1.Height / 2)
-        InsertColumnMatrix(sMatrix, 2, 0, 0, 1, 0)
-        InsertColumnMatrix(sMatrix, 3, 0, 0, 0, 1)
+        'InsertRowMatrix(vMatrix, 0, 1, 0, 0, 0)
+        'InsertRowMatrix(vMatrix, 1, 0, 1, 0, 0)
+        'InsertRowMatrix(vMatrix, 2, 0, 0, 0, 0)
+        'InsertRowMatrix(vMatrix, 3, 0, 0, 0, 1)
+
+        'InsertRowMatrix(sMatrix, 0, 1, 0, 0, PictureBox1.Width / 2)
+        'InsertRowMatrix(sMatrix, 1, 0, 1, 0, PictureBox1.Height / 2)
+        'InsertRowMatrix(sMatrix, 2, 0, 0, 1, 0)
+        'InsertRowMatrix(sMatrix, 3, 0, 0, 0, 1)
 
         'torus.SetVertices(img, p1, p2, pI)
         'torus.DrawTorus(img, p1, p2, pI, wMatrix, rMatrix, vMatrix, sMatrix)
     End Sub
 
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Dim rX As Integer = CInt(NumericUpDown5.Text)
+        Dim rY As Integer = CInt(NumericUpDown6.Text)
+        Dim rZ As Integer = CInt(NumericUpDown7.Text)
+
+        SetMatrixRow(rMatrix, 0, Math.Cos(rY * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180), Math.Cos(rY * Math.PI / 180) * Math.Sin(rZ * Math.PI / 180), -Math.Sin(rY * Math.PI / 180), 0)
+        SetMatrixRow(rMatrix, 1, Math.Sin(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180) + Math.Cos(rX * Math.PI / 180) * -Math.Sin(rZ * Math.PI / 180), Math.Sin(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Sin(rZ * Math.PI / 180) + Math.Cos(rX * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180), Math.Sin(rX * Math.PI / 180) * Math.Cos(rY * Math.PI / 180), 0)
+        SetMatrixRow(rMatrix, 2, Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180) + -Math.Sin(rX * Math.PI / 180) * -Math.Sin(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Sin(rZ * Math.PI / 180) + -Math.Sin(rX * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Cos(rY * Math.PI / 180), 0)
+        SetMatrixRow(rMatrix, 3, 0, 0, 0, 1)
+
+        Dim mesh As New Mesh3D(torus.m, torus.n)
+        For i = 0 To torus.m
+            For j = 0 To torus.n
+                mesh.v(i, j).x = CInt(torus.mesh.n(i, j).x * rMatrix(0, 0) + torus.mesh.n(i, j).y * rMatrix(1, 0) + torus.mesh.n(i, j).z * rMatrix(2, 0))
+                mesh.v(i, j).y = CInt(torus.mesh.n(i, j).x * rMatrix(0, 1) + torus.mesh.n(i, j).y * rMatrix(1, 1) + torus.mesh.n(i, j).z * rMatrix(2, 1))
+                mesh.v(i, j).z = CInt(torus.mesh.n(i, j).x * rMatrix(0, 2) + torus.mesh.n(i, j).y * rMatrix(1, 2) + torus.mesh.n(i, j).z * rMatrix(2, 2))
+            Next
+        Next
+        torus.mesh.n = mesh.v
+
+        DrawObject(img, torus.center, torus.mesh, torus.m, torus.n, viewVector)
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        Dim tX As Integer = CInt(NumericUpDown8.Text)
+        Dim tY As Integer = CInt(NumericUpDown9.Text)
+        Dim tZ As Integer = CInt(NumericUpDown10.Text)
+
+        Dim mesh As New Mesh3D(torus.m, torus.n)
+        For i = 0 To torus.m
+            For j = 0 To torus.n
+                mesh.v(i, j).x = torus.mesh.n(i, j).x + tX
+                mesh.v(i, j).y = torus.mesh.n(i, j).y + tY
+                mesh.v(i, j).z = torus.mesh.n(i, j).z + tZ
+            Next
+        Next
+        torus.mesh.n = mesh.v
+
+        DrawObject(img, torus.center, torus.mesh, torus.m, torus.n, viewVector)
+    End Sub
+
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         img = PictureBox1.CreateGraphics
+        centerX = PictureBox1.Width / 2
+        centerY = PictureBox1.Height / 2
+        centerZ = 0.0
     End Sub
 End Class
