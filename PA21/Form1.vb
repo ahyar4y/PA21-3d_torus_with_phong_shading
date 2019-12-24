@@ -2,10 +2,15 @@
     Dim img As Graphics
     Dim wMatrix(3, 3), rMatrix(3, 3), vMatrix(3, 3), sMatrix(3, 3) As Double
     Dim torus As Torus3D
-    Dim viewVector As New Vector3D(0.0, 0.0, 1.0)
-    Dim centerX As Integer
-    Dim centerY As Integer
-    Dim centerZ As Integer
+    Dim lightSource As Vector3D
+    Dim viewer As Vector3D
+    Dim centerX, centerY, centerZ As Integer
+    Dim ka, ia, kd, ks, il As Double
+    Dim n As Integer
+
+    Private Sub NumericUpDown_ValueChanged(sender As Object, e As EventArgs) Handles NumericUpDown11.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown16.ValueChanged
+
+    End Sub
 
     Private Sub PictureBox1_MouseMove(sender As Object, e As MouseEventArgs) Handles PictureBox1.MouseMove
         Label5.Text = "X: " + (e.X - centerX).ToString
@@ -14,8 +19,14 @@
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         torus = New Torus3D(centerX, centerY, centerZ, CDbl(NumericUpDown1.Text), CDbl(NumericUpDown2.Text), CInt(NumericUpDown3.Text), CInt(NumericUpDown4.Text))
+        ka = CDbl(NumericUpDown11.Text)
+        ia = CDbl(NumericUpDown12.Text)
+        kd = CDbl(NumericUpDown13.Text)
+        ks = CDbl(NumericUpDown14.Text)
+        n = CInt(NumericUpDown15.Text)
+        il = CDbl(NumericUpDown16.Text)
 
-        DrawObject(img, torus, viewVector)
+        DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
         'InsertRowMatrix(wMatrix, 0, 1, 0, 0, 0)
         'InsertRowMatrix(wMatrix, 1, 0, 1, 0, 0)
         'InsertRowMatrix(wMatrix, 2, 0, 0, 1, 0)
@@ -45,7 +56,7 @@
         SetMatrixRow(rMatrix, 2, Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180) + -Math.Sin(rX * Math.PI / 180) * -Math.Sin(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Sin(rY * Math.PI / 180) * Math.Sin(rZ * Math.PI / 180) + -Math.Sin(rX * Math.PI / 180) * Math.Cos(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) * Math.Cos(rY * Math.PI / 180), 0)
         SetMatrixRow(rMatrix, 3, 0, 0, 0, 1)
 
-        Dim mesh As Mesh3D = torus.mesh
+        Dim mesh As New Mesh3D(torus.m, torus.n)
         For i = 0 To torus.m
             For j = 0 To torus.n
                 mesh.v(i, j).x = CInt((torus.mesh.n(i, j).x) * rMatrix(0, 0) + torus.mesh.n(i, j).y * rMatrix(1, 0) + torus.mesh.n(i, j).z * rMatrix(2, 0))
@@ -55,7 +66,7 @@
         Next
         torus.mesh.n = mesh.v
 
-        DrawObject(img, torus, viewVector)
+        DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -63,11 +74,11 @@
         Dim tY As Integer = CInt(NumericUpDown9.Text)
         Dim tZ As Integer = CInt(NumericUpDown10.Text)
 
-        Dim mesh As Mesh3D = torus.mesh
+        Dim mesh As New Mesh3D(torus.m, torus.n)
         For i = 0 To torus.m
             For j = 0 To torus.n
                 mesh.v(i, j).x = torus.mesh.n(i, j).x + tX
-                mesh.v(i, j).y = torus.mesh.n(i, j).y - tY
+                mesh.v(i, j).y = torus.mesh.n(i, j).y + tY
                 mesh.v(i, j).z = torus.mesh.n(i, j).z + tZ
             Next
         Next
@@ -77,11 +88,14 @@
         torus.center.y -= tY
         torus.center.z += tZ
 
-        DrawObject(img, torus, viewVector)
+        DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         img = PictureBox1.CreateGraphics
+
+        viewer = New Vector3D(0.0, 0.0, 4.0)
+        lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
         centerX = PictureBox1.Width / 2
         centerY = PictureBox1.Height / 2
         centerZ = 0.0

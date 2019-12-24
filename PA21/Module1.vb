@@ -1,4 +1,5 @@
 ﻿Module Module1
+    'Dim clr() As Color = {Color.Red, Color.Green, Color.LightBlue, Color.Yellow, Color.Pink, Color.Violet}
     Class Vector3D
         Public x, y, z As Double
 
@@ -20,12 +21,31 @@
             z = _z
         End Sub
 
+        Public Function MultiplyBy(n As Double) As Vector3D
+            Dim v As New Vector3D
+
+            v.x *= n
+            v.y *= n
+            v.z *= n
+
+            Return v
+        End Function
+
         Public Function DotProduct(v As Vector3D) As Double
             Return Me.x * v.x + Me.y * v.y + Me.z * v.z
         End Function
 
         Public Function VectorLength() As Double
             Return Math.Sqrt(DotProduct(Me))
+        End Function
+
+        Public Function Plus(v As Vector3D) As Vector3D
+            Dim vOut As New Vector3D
+            vOut.x = Me.x + v.x
+            vOut.y = Me.y + v.y
+            vOut.z = Me.z + v.z
+
+            Return vOut
         End Function
 
         Public Function Minus(v As Vector3D) As Vector3D
@@ -83,6 +103,7 @@
         Public center As Vector3D
         Public majorR, minorR As Double
         Public m, n As Integer
+        Public c_theta, s_theta, c_phi, s_phi As Double
         Public mesh As Mesh3D
 
         Public Sub New(_x As Double, _y As Double, _z As Double, _majorR As Double, _minorR As Double, _m As Integer, _n As Integer)
@@ -101,10 +122,8 @@
 
         Public Sub FillMesh()
             Dim phi, theta As Double
-            Dim d_phi = 360 / CDbl(n)
-            Dim d_theta = 360 / CDbl(m)
-
-            Dim c_theta, s_theta, c_phi, s_phi
+            Dim d_phi As Integer = 360 / CDbl(n)
+            Dim d_theta As Integer = 360 / CDbl(m)
 
             theta = -Math.PI
             phi = -Math.PI
@@ -134,21 +153,28 @@
         Structure PEdge
             Public p1, p2 As Vector3D
             Public yMin, xYMin, yMax, dx, dy As Integer
+            Public eVNormal() As Vector3D
         End Structure
 
         Public pPoint(2) As Vector3D
         Public pEdges(2) As PEdge
         Public pYMin, pYMax As Integer
+        Public pNormal As Vector3D
         Public vNormal(2) As Vector3D
         Public pColor As Color
 
-        Public Sub New(torus As Torus3D, v0 As Vector3D, v1 As Vector3D, v2 As Vector3D)
+        Public Sub New(torus As Torus3D, v0 As Vector3D, v1 As Vector3D, v2 As Vector3D, vN() As Vector3D)
             pPoint = {v0, v1, v2}
+
+            pNormal = ComputeTriangleNormal(v0, v1, v2)
+            vNormal = vN
 
             pYMax = pPoint(0).y
             pYMin = pPoint(0).y
 
             For i = 0 To 2
+                ReDim pEdges(i).eVNormal(1)
+
                 If pYMin > pPoint(i).y Then
                     pYMin = pPoint(i).y
                 End If
@@ -158,34 +184,41 @@
                 End If
             Next
 
-            vNormal = GetVertexNormal(torus, pPoint)
-
-            For i = 0 To 2
-                Console.WriteLine(vNormal(i).x.ToString + " " + vNormal(i).y.ToString + " " + vNormal(i).z.ToString)
-            Next
+            'For i = 0 To 2
+            '    Console.WriteLine(vNormal(i).x.ToString + " " + vNormal(i).y.ToString + " " + vNormal(i).z.ToString)
+            'Next
 
             'Console.WriteLine("Polygon Y Min: " & pYMin.ToString)
             'Console.WriteLine("Polygon Y Max: " & pYMax.ToString)
+            'Console.WriteLine(pNormal.x.ToString + " " + pNormal.y.ToString + " " + pNormal.z.ToString)
         End Sub
 
         Sub SetEdges()
+            Dim temp As Vector3D
             For i = 0 To 1
                 pEdges(i).p1 = pPoint(i)
                 pEdges(i).p2 = pPoint(i + 1)
+                pEdges(i).eVNormal(0) = vNormal(i)
+                pEdges(i).eVNormal(1) = vNormal(i + 1)
             Next
 
             pEdges(2).p1 = pPoint(2)
             pEdges(2).p2 = pPoint(0)
+            pEdges(2).eVNormal(0) = vNormal(2)
+            pEdges(2).eVNormal(1) = vNormal(0)
 
             For i = 0 To 2
-                pEdges(i).yMax = pEdges(i).p1.y
-                pEdges(i).yMin = pEdges(i).p2.y
-                pEdges(i).xYMin = pEdges(i).p2.x
+                pEdges(i).yMax = pEdges(i).p2.y
+                pEdges(i).yMin = pEdges(i).p1.y
+                pEdges(i).xYMin = pEdges(i).p1.x
 
-                If pEdges(i).yMax < pEdges(i).p2.y Then
-                    pEdges(i).yMax = pEdges(i).p2.y
-                    pEdges(i).yMin = pEdges(i).p1.y
-                    pEdges(i).xYMin = pEdges(i).p1.x
+                If pEdges(i).yMax < pEdges(i).p1.y Then
+                    pEdges(i).yMax = pEdges(i).p1.y
+                    pEdges(i).yMin = pEdges(i).p2.y
+                    pEdges(i).xYMin = pEdges(i).p2.x
+                    temp = pEdges(i).eVNormal(0)
+                    pEdges(i).eVNormal(0) = pEdges(i).eVNormal(1)
+                    pEdges(i).eVNormal(1) = temp
                 End If
 
                 pEdges(i).dx = pEdges(i).p2.x - pEdges(i).p1.x
@@ -202,7 +235,7 @@
 
     Class SETElmt
         Public yMin, yMax, xYMin, dx, dy, carry As Integer
-        Public vNormal As Vector3D
+        Public pNormal, vNormal(1) As Vector3D
         Public SETNext As SETElmt
     End Class
 
@@ -237,20 +270,20 @@
         Return temp
     End Function
 
-    Sub CreateSET(img As Graphics, center As Vector3D, p As PolygonData)
+    Sub CreateSET(img As Graphics, center As Vector3D, p As PolygonData, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
         Dim SETrange As Integer = p.pYMax - p.pYMin + 1
         Dim pSET(SETrange - 1) As SETElmt
         Dim temp As SETElmt
 
         For i = 0 To SETrange - 1
             pSET(i) = New SETElmt
-            pSET(i).yMin = Integer.MinValue
+            pSET(i).yMin = Integer.MaxValue
         Next
 
         p.SetEdges()
 
         For i = 0 To 2
-            If pSET(p.pEdges(i).yMin - p.pYMin).yMin = Integer.MinValue Then
+            If pSET(p.pEdges(i).yMin - p.pYMin).yMin = Integer.MaxValue Then
                 temp = InsertSET(p, i)
                 temp.SETNext = Nothing
                 If temp.dy <> 0 Then
@@ -267,9 +300,10 @@
 
         'For i = 0 To SETrange - 1
         '    Console.WriteLine(i.ToString + " " + pSET(i).yMin.ToString + " " + pSET(i).yMax.ToString + " " + pSET(i).xYMin.ToString + " " + pSET(i).dx.ToString + " " + pSET(i).dy.ToString)
+        '    'Console.WriteLine(pSET(i).vNormal(0).x.ToString + " " + pSET(i).vNormal(0).y.ToString + " " + pSET(i).vNormal(0).z.ToString)
         'Next
 
-        FillPolygon(img, center, p, pSET)
+        FillPolygon(img, center, p, pSET, viewer, lightSource, ka, ia, kd, ks, n, il)
     End Sub
 
     Function InsertSET(p As PolygonData, i As Integer) As SETElmt
@@ -280,16 +314,18 @@
             .dx = p.pEdges(i).dx,
             .dy = p.pEdges(i).dy,
             .carry = 0,
-            .vNormal = Nothing
+            .pNormal = p.pNormal,
+            .vNormal = p.pEdges(i).eVNormal
         }
 
         Return temp
     End Function
 
-    Sub FillPolygon(img As Graphics, center As Vector3D, pNew As PolygonData, pSET() As SETElmt)
+    Sub FillPolygon(img As Graphics, center As Vector3D, pNew As PolygonData, pSET() As SETElmt, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
         Dim AEL As SETElmt
         Dim cur As SETElmt = AEL
         Dim prev As SETElmt = Nothing
+        Dim nA, nB, nx As Vector3D
 
         For i = 0 To pSET.Length - 1
             While cur IsNot Nothing
@@ -313,28 +349,57 @@
                     cur = cur.SETNext
                 End While
 
-                If pSET(i).yMin = Integer.MinValue Then
+                If pSET(i).yMin = Integer.MaxValue Then
                     cur.SETNext = Nothing
                 Else
                     cur.SETNext = pSET(i)
                 End If
             Else
-                If pSET(i).yMin = Integer.MinValue Then
+                If pSET(i).yMin = Integer.MaxValue Then
                     AEL = Nothing
                 Else
                     AEL = pSET(i)
                 End If
             End If
 
-            'Console.Write(i.ToString + " ")
             AEL = SortSET(AEL)
             cur = AEL
 
-            While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
-                img.DrawLine(New Pen(Color.LightBlue), CInt(cur.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), CInt(cur.SETNext.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y))
-                'Console.WriteLine(i.ToString + " " + (i + pNew.pYMin).ToString + " | " + cur.yMax.ToString + " " + cur.xYMin.ToString + " " + cur.dx.ToString + " " + cur.dy.ToString + " " + cur.carry.ToString + " || " + cur.SETNext.yMax.ToString + " " + cur.SETNext.xYMin.ToString + " " + cur.SETNext.dx.ToString + " " + cur.SETNext.dy.ToString + " " + cur.SETNext.carry.ToString)
+            'While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
+            '    img.DrawLine(New Pen(Color.SkyBlue), CInt(cur.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), CInt(cur.SETNext.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y))
+            '    'Console.WriteLine(i.ToString + " " + (i + pNew.pYMin).ToString + " | " + cur.yMax.ToString + " " + cur.xYMin.ToString + " " + cur.dx.ToString + " " + cur.dy.ToString + " " + cur.carry.ToString + " || " + cur.SETNext.yMax.ToString + " " + cur.SETNext.xYMin.ToString + " " + cur.SETNext.dx.ToString + " " + cur.SETNext.dy.ToString + " " + cur.SETNext.carry.ToString)
 
-                cur = cur.SETNext.SETNext
+            '    nA = InterpolateNormal(cur.vNormal(1), cur.vNormal(0), cur.yMax, cur.yMin, i + pNew.pYMin)
+            '    nB = InterpolateNormal(cur.SETNext.vNormal(1), cur.SETNext.vNormal(0), cur.SETNext.yMax, cur.SETNext.yMin, i + pNew.pYMin)
+            '    'Console.WriteLine(nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
+            '    'Console.WriteLine(cur.pNormal.x.ToString)
+
+            '    For j = cur.xYMin To cur.SETNext.xYMin
+            '        If cur.SETNext.xYMin - cur.xYMin <> 0 Then
+            '            nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
+            '            'Console.WriteLine(nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
+            '            'PhongIllumination(viewer, lightSource, nx, cur.pNormal, ka, ia, kd, ks, n, il)
+            '        End If
+            '    Next
+
+            '    cur = cur.SETNext.SETNext
+            'End While
+
+            While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
+                nA = InterpolateNormal(cur.vNormal(1), cur.vNormal(0), cur.yMax, cur.yMin, i + pNew.pYMin)
+                nB = InterpolateNormal(cur.SETNext.vNormal(1), cur.SETNext.vNormal(0), cur.SETNext.yMax, cur.SETNext.yMin, i + pNew.pYMin)
+                'Console.WriteLine(cur.vNormal(0).x.ToString + " " + cur.vNormal(0).y.ToString + " " + cur.vNormal(0).z.ToString)
+                'Console.WriteLine(nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
+
+                For j = cur.xYMin To cur.SETNext.xYMin
+                    If cur.SETNext.xYMin - cur.xYMin <> 0 Then
+                        nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
+                        'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
+                        PhongIllumination(viewer, lightSource, nx, cur.pNormal, ka, ia, kd, ks, n, il) 'WHAT HAPPENED HERE
+                        'Console.WriteLine(cur.pNormal.x.ToString)
+                    End If
+                Next
+                cur = cur.SETNext
             End While
 
             cur = AEL
@@ -421,23 +486,55 @@
         Return sorted
     End Function
 
-    Function GetVertexNormal(torus As Torus3D, v() As Vector3D) As Vector3D()
-        Dim vNormal(2) As Vector3D
+    Function GetVertexNormal(center As Vector3D, majorR As Integer, minorR As Integer, c_theta As Double, s_theta As Double, v As Vector3D) As Vector3D
+        Dim vNormal As New Vector3D
 
-        For i = 0 To 2
-            vNormal(i) = New Vector3D
-            vNormal(i).x = (v(i).x - torus.majorR) / torus.minorR
-            vNormal(i).y = (v(i).y - torus.majorR) / torus.minorR
-            vNormal(i).z = (v(i).z - torus.majorR) / torus.minorR
-        Next
+        vNormal.x = (v.x - majorR * c_theta) / minorR
+        vNormal.y = (v.y - majorR * s_theta) / minorR
+        vNormal.z = (v.z - 0) / minorR
+        'Console.WriteLine(vNormal.x.ToString + " " + vNormal.y.ToString + " " + vNormal.z.ToString)
 
         Return vNormal
     End Function
 
-    Sub DrawObject(img As Graphics, torus As Torus3D, viewVector As Vector3D)
+    Function InterpolateNormal(n1 As Vector3D, n2 As Vector3D, c1 As Double, c2 As Double, cp As Double) As Vector3D
+        Dim np As Vector3D
+        np = n1.Minus(n1.Minus(n2).MultiplyBy((c1 - cp) / (c1 - c2)))
+        'Console.WriteLine(np.x.ToString + " " + np.y.ToString + " " + np.z.ToString)
+        Return np
+    End Function
+
+    Sub PhongIllumination(viewer As Vector3D, LightSource As Vector3D, p As Vector3D, pn As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
+        Dim iAmb As Double
+        Dim iDiff As Double
+        Dim iSpec As Double
+        Dim iTot As Double
+
+        Dim lightVector As Vector3D = LightSource.Minus(p)
+        lightVector.Normalize()
+
+        Dim viewVector As Vector3D = viewer.Minus(p)
+        viewVector.Normalize()
+
+        Dim reflVector As Vector3D = pn.MultiplyBy(lightVector.DotProduct(pn) * 2).Minus(lightVector)
+
+
+        iAmb = ka * ia
+        iDiff = kd * il * lightVector.DotProduct(pn)
+        iSpec = ks * il * Math.Pow(viewVector.DotProduct(reflVector), n)
+
+        iTot = iAmb + iDiff + iSpec
+
+        'Console.WriteLine(iTot.ToString)
+    End Sub
+
+    Sub DrawObject(img As Graphics, torus As Torus3D, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
         Dim i, j As Integer
         Dim v0, v1, v2 As Vector3D
         Dim p As PolygonData
+        Dim vNormal(2) As Vector3D
+        Dim viewVector As Vector3D = viewer
+        viewVector.Normalize()
 
         Dim triangleNormal As Vector3D
 
@@ -450,9 +547,12 @@
                 triangleNormal = ComputeTriangleNormal(v0, v1, v2)
 
                 If Not BackFaceCulling(viewVector, triangleNormal) Then
-                    p = New PolygonData(torus, v0, v1, v2)
+                    vNormal(0) = GetVertexNormal(torus.center, torus.majorR, torus.minorR, torus.c_theta, torus.s_theta, v0)
+                    vNormal(1) = GetVertexNormal(torus.center, torus.majorR, torus.minorR, torus.c_theta, torus.s_theta, v1)
+                    vNormal(2) = GetVertexNormal(torus.center, torus.majorR, torus.minorR, torus.c_theta, torus.s_theta, v2)
+                    p = New PolygonData(torus, v0, v1, v2, vNormal)
 
-                    CreateSET(img, torus.center, p)
+                    CreateSET(img, torus.center, p, viewer, lightSource, ka, ia, kd, ks, n, il)
                     DrawTriangle(img, torus.center, v0, v1, v2)
                 End If
 
@@ -462,9 +562,12 @@
                 triangleNormal = ComputeTriangleNormal(v0, v1, v2)
 
                 If Not BackFaceCulling(viewVector, triangleNormal) Then
-                    p = New PolygonData(torus, v0, v1, v2)
+                    vNormal(0) = GetVertexNormal(torus.center, torus.majorR, torus.minorR, torus.c_theta, torus.s_theta, v0)
+                    vNormal(1) = GetVertexNormal(torus.center, torus.majorR, torus.minorR, torus.c_theta, torus.s_theta, v1)
+                    vNormal(2) = GetVertexNormal(torus.center, torus.majorR, torus.minorR, torus.c_theta, torus.s_theta, v2)
+                    p = New PolygonData(torus, v0, v1, v2, vNormal)
 
-                    CreateSET(img, torus.center, p)
+                    CreateSET(img, torus.center, p, viewer, lightSource, ka, ia, kd, ks, n, il)
                     DrawTriangle(img, torus.center, v0, v1, v2)
                 End If
             Next
@@ -518,6 +621,6 @@
         img.DrawLine(New Pen(Color.Black), CInt(v0.x + center.x), -CInt(v0.y) + CInt(center.y), CInt(v1.x + center.x), -CInt(v1.y) + CInt(center.y))
         img.DrawLine(New Pen(Color.Black), CInt(v1.x + center.x), -CInt(v1.y) + CInt(center.y), CInt(v2.x + center.x), -CInt(v2.y) + CInt(center.y))
         img.DrawLine(New Pen(Color.Black), CInt(v2.x + center.x), -CInt(v2.y) + CInt(center.y), CInt(v0.x + center.x), -CInt(v0.y) + CInt(center.y))
-        'Console.WriteLine(CInt(v0.x).ToString + " " + CInt(v0.y).ToString + " " + CInt(v1.x).ToString + " " + CInt(v1.y).ToString + " " + CInt(v2.x).ToString + " " + CInt(v2.y).ToString)
+        'Console.WriteLine(CInt(v0.x).ToString + " " + CInt(v0.y).ToString + " " + CInt(v0.z).ToString + " " + CInt(v1.x).ToString + " " + CInt(v1.y).ToString + " " + CInt(v1.z).ToString + " " + CInt(v2.x).ToString + " " + CInt(v2.y).ToString + " " + CInt(v2.z).ToString)
     End Sub
 End Module

@@ -53,6 +53,29 @@ Partial Class Form1
         Me.Label11 = New System.Windows.Forms.Label()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.Label26 = New System.Windows.Forms.Label()
+        Me.Label23 = New System.Windows.Forms.Label()
+        Me.Label24 = New System.Windows.Forms.Label()
+        Me.NumericUpDown19 = New System.Windows.Forms.NumericUpDown()
+        Me.Label25 = New System.Windows.Forms.Label()
+        Me.NumericUpDown18 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown17 = New System.Windows.Forms.NumericUpDown()
+        Me.Label22 = New System.Windows.Forms.Label()
+        Me.Label21 = New System.Windows.Forms.Label()
+        Me.Label20 = New System.Windows.Forms.Label()
+        Me.Label19 = New System.Windows.Forms.Label()
+        Me.NumericUpDown16 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown15 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown14 = New System.Windows.Forms.NumericUpDown()
+        Me.Label18 = New System.Windows.Forms.Label()
+        Me.Label17 = New System.Windows.Forms.Label()
+        Me.Label16 = New System.Windows.Forms.Label()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.NumericUpDown13 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown12 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown11 = New System.Windows.Forms.NumericUpDown()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -68,6 +91,16 @@ Partial Class Form1
         CType(Me.NumericUpDown8, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown9, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown10, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox5.SuspendLayout()
+        CType(Me.NumericUpDown19, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown18, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown17, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown16, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown15, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown14, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown13, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown12, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown11, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'PictureBox1
@@ -363,12 +396,250 @@ Partial Class Form1
         '
         'GroupBox5
         '
+        Me.GroupBox5.Controls.Add(Me.Label26)
+        Me.GroupBox5.Controls.Add(Me.Label23)
+        Me.GroupBox5.Controls.Add(Me.Label24)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown19)
+        Me.GroupBox5.Controls.Add(Me.Label25)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown18)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown17)
+        Me.GroupBox5.Controls.Add(Me.Label22)
+        Me.GroupBox5.Controls.Add(Me.Label21)
+        Me.GroupBox5.Controls.Add(Me.Label20)
+        Me.GroupBox5.Controls.Add(Me.Label19)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown16)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown15)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown14)
+        Me.GroupBox5.Controls.Add(Me.Label18)
+        Me.GroupBox5.Controls.Add(Me.Label17)
+        Me.GroupBox5.Controls.Add(Me.Label16)
+        Me.GroupBox5.Controls.Add(Me.Label15)
+        Me.GroupBox5.Controls.Add(Me.Label14)
+        Me.GroupBox5.Controls.Add(Me.Label13)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown13)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown12)
+        Me.GroupBox5.Controls.Add(Me.NumericUpDown11)
         Me.GroupBox5.Location = New System.Drawing.Point(568, 215)
         Me.GroupBox5.Name = "GroupBox5"
-        Me.GroupBox5.Size = New System.Drawing.Size(374, 209)
+        Me.GroupBox5.Size = New System.Drawing.Size(374, 308)
         Me.GroupBox5.TabIndex = 16
         Me.GroupBox5.TabStop = False
         Me.GroupBox5.Text = "Illumination && Shading"
+        '
+        'Label26
+        '
+        Me.Label26.AutoSize = True
+        Me.Label26.Location = New System.Drawing.Point(101, 140)
+        Me.Label26.Name = "Label26"
+        Me.Label26.Size = New System.Drawing.Size(67, 13)
+        Me.Label26.TabIndex = 36
+        Me.Label26.Text = "Light Source"
+        '
+        'Label23
+        '
+        Me.Label23.AutoSize = True
+        Me.Label23.Location = New System.Drawing.Point(101, 234)
+        Me.Label23.Name = "Label23"
+        Me.Label23.Size = New System.Drawing.Size(14, 13)
+        Me.Label23.TabIndex = 15
+        Me.Label23.Text = "Z"
+        '
+        'Label24
+        '
+        Me.Label24.AutoSize = True
+        Me.Label24.Location = New System.Drawing.Point(101, 169)
+        Me.Label24.Name = "Label24"
+        Me.Label24.Size = New System.Drawing.Size(14, 13)
+        Me.Label24.TabIndex = 13
+        Me.Label24.Text = "X"
+        '
+        'NumericUpDown19
+        '
+        Me.NumericUpDown19.Location = New System.Drawing.Point(121, 232)
+        Me.NumericUpDown19.Name = "NumericUpDown19"
+        Me.NumericUpDown19.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown19.TabIndex = 35
+        Me.NumericUpDown19.Value = New Decimal(New Integer() {10, 0, 0, 0})
+        '
+        'Label25
+        '
+        Me.Label25.AutoSize = True
+        Me.Label25.Location = New System.Drawing.Point(101, 200)
+        Me.Label25.Name = "Label25"
+        Me.Label25.Size = New System.Drawing.Size(14, 13)
+        Me.Label25.TabIndex = 14
+        Me.Label25.Text = "Y"
+        '
+        'NumericUpDown18
+        '
+        Me.NumericUpDown18.Location = New System.Drawing.Point(121, 198)
+        Me.NumericUpDown18.Name = "NumericUpDown18"
+        Me.NumericUpDown18.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown18.TabIndex = 34
+        Me.NumericUpDown18.Value = New Decimal(New Integer() {10, 0, 0, 0})
+        '
+        'NumericUpDown17
+        '
+        Me.NumericUpDown17.Location = New System.Drawing.Point(121, 167)
+        Me.NumericUpDown17.Minimum = New Decimal(New Integer() {100, 0, 0, -2147483648})
+        Me.NumericUpDown17.Name = "NumericUpDown17"
+        Me.NumericUpDown17.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown17.TabIndex = 33
+        Me.NumericUpDown17.Value = New Decimal(New Integer() {10, 0, 0, -2147483648})
+        '
+        'Label22
+        '
+        Me.Label22.AutoSize = True
+        Me.Label22.Location = New System.Drawing.Point(251, 39)
+        Me.Label22.Name = "Label22"
+        Me.Label22.Size = New System.Drawing.Size(72, 13)
+        Me.Label22.TabIndex = 32
+        Me.Label22.Text = "Light Intensity"
+        '
+        'Label21
+        '
+        Me.Label21.AutoSize = True
+        Me.Label21.Location = New System.Drawing.Point(169, 39)
+        Me.Label21.Name = "Label21"
+        Me.Label21.Size = New System.Drawing.Size(49, 13)
+        Me.Label21.TabIndex = 31
+        Me.Label21.Text = "Specular"
+        '
+        'Label20
+        '
+        Me.Label20.AutoSize = True
+        Me.Label20.Location = New System.Drawing.Point(97, 39)
+        Me.Label20.Name = "Label20"
+        Me.Label20.Size = New System.Drawing.Size(40, 13)
+        Me.Label20.TabIndex = 30
+        Me.Label20.Text = "Diffuse"
+        '
+        'Label19
+        '
+        Me.Label19.AutoSize = True
+        Me.Label19.Location = New System.Drawing.Point(18, 39)
+        Me.Label19.Name = "Label19"
+        Me.Label19.Size = New System.Drawing.Size(45, 13)
+        Me.Label19.TabIndex = 29
+        Me.Label19.Text = "Ambient"
+        '
+        'NumericUpDown16
+        '
+        Me.NumericUpDown16.DecimalPlaces = 2
+        Me.NumericUpDown16.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me.NumericUpDown16.Location = New System.Drawing.Point(288, 61)
+        Me.NumericUpDown16.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown16.Name = "NumericUpDown16"
+        Me.NumericUpDown16.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown16.TabIndex = 28
+        Me.NumericUpDown16.Value = New Decimal(New Integer() {5, 0, 0, 65536})
+        '
+        'NumericUpDown15
+        '
+        Me.NumericUpDown15.Location = New System.Drawing.Point(180, 96)
+        Me.NumericUpDown15.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown15.Name = "NumericUpDown15"
+        Me.NumericUpDown15.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown15.TabIndex = 27
+        Me.NumericUpDown15.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        'NumericUpDown14
+        '
+        Me.NumericUpDown14.DecimalPlaces = 2
+        Me.NumericUpDown14.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me.NumericUpDown14.Location = New System.Drawing.Point(180, 61)
+        Me.NumericUpDown14.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown14.Name = "NumericUpDown14"
+        Me.NumericUpDown14.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown14.TabIndex = 26
+        Me.NumericUpDown14.Value = New Decimal(New Integer() {3, 0, 0, 65536})
+        '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(161, 98)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(13, 13)
+        Me.Label18.TabIndex = 25
+        Me.Label18.Text = "n"
+        '
+        'Label17
+        '
+        Me.Label17.AutoSize = True
+        Me.Label17.Location = New System.Drawing.Point(155, 63)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(19, 13)
+        Me.Label17.TabIndex = 24
+        Me.Label17.Text = "Ks"
+        '
+        'Label16
+        '
+        Me.Label16.AutoSize = True
+        Me.Label16.Location = New System.Drawing.Point(270, 63)
+        Me.Label16.Name = "Label16"
+        Me.Label16.Size = New System.Drawing.Size(12, 13)
+        Me.Label16.TabIndex = 23
+        Me.Label16.Text = "Il"
+        '
+        'Label15
+        '
+        Me.Label15.AutoSize = True
+        Me.Label15.Location = New System.Drawing.Point(78, 63)
+        Me.Label15.Name = "Label15"
+        Me.Label15.Size = New System.Drawing.Size(20, 13)
+        Me.Label15.TabIndex = 22
+        Me.Label15.Text = "Kd"
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(5, 98)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(16, 13)
+        Me.Label14.TabIndex = 21
+        Me.Label14.Text = "Ia"
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(5, 63)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(20, 13)
+        Me.Label13.TabIndex = 20
+        Me.Label13.Text = "Ka"
+        '
+        'NumericUpDown13
+        '
+        Me.NumericUpDown13.DecimalPlaces = 2
+        Me.NumericUpDown13.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me.NumericUpDown13.Location = New System.Drawing.Point(104, 61)
+        Me.NumericUpDown13.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown13.Name = "NumericUpDown13"
+        Me.NumericUpDown13.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown13.TabIndex = 19
+        Me.NumericUpDown13.Value = New Decimal(New Integer() {5, 0, 0, 65536})
+        '
+        'NumericUpDown12
+        '
+        Me.NumericUpDown12.DecimalPlaces = 2
+        Me.NumericUpDown12.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me.NumericUpDown12.Location = New System.Drawing.Point(27, 96)
+        Me.NumericUpDown12.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown12.Name = "NumericUpDown12"
+        Me.NumericUpDown12.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown12.TabIndex = 18
+        Me.NumericUpDown12.Value = New Decimal(New Integer() {5, 0, 0, 65536})
+        '
+        'NumericUpDown11
+        '
+        Me.NumericUpDown11.DecimalPlaces = 2
+        Me.NumericUpDown11.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me.NumericUpDown11.Location = New System.Drawing.Point(27, 61)
+        Me.NumericUpDown11.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown11.Name = "NumericUpDown11"
+        Me.NumericUpDown11.Size = New System.Drawing.Size(45, 20)
+        Me.NumericUpDown11.TabIndex = 17
+        Me.NumericUpDown11.Value = New Decimal(New Integer() {2, 0, 0, 65536})
         '
         'Form1
         '
@@ -382,7 +653,7 @@ Partial Class Form1
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.PictureBox1)
         Me.Name = "Form1"
-        Me.Text = "fuck this shit"
+        Me.Text = "pma"
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -401,6 +672,17 @@ Partial Class Form1
         CType(Me.NumericUpDown8, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown9, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown10, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox5.ResumeLayout(False)
+        Me.GroupBox5.PerformLayout()
+        CType(Me.NumericUpDown19, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown18, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown17, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown16, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown15, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown14, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown13, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown12, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown11, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -437,4 +719,27 @@ Partial Class Form1
     Friend WithEvents Label11 As Label
     Friend WithEvents Label12 As Label
     Friend WithEvents GroupBox5 As GroupBox
+    Friend WithEvents Label21 As Label
+    Friend WithEvents Label20 As Label
+    Friend WithEvents Label19 As Label
+    Friend WithEvents NumericUpDown16 As NumericUpDown
+    Friend WithEvents NumericUpDown15 As NumericUpDown
+    Friend WithEvents NumericUpDown14 As NumericUpDown
+    Friend WithEvents Label18 As Label
+    Friend WithEvents Label17 As Label
+    Friend WithEvents Label16 As Label
+    Friend WithEvents Label15 As Label
+    Friend WithEvents Label14 As Label
+    Friend WithEvents Label13 As Label
+    Friend WithEvents NumericUpDown13 As NumericUpDown
+    Friend WithEvents NumericUpDown12 As NumericUpDown
+    Friend WithEvents NumericUpDown11 As NumericUpDown
+    Friend WithEvents Label26 As Label
+    Friend WithEvents Label23 As Label
+    Friend WithEvents Label24 As Label
+    Friend WithEvents NumericUpDown19 As NumericUpDown
+    Friend WithEvents Label25 As Label
+    Friend WithEvents NumericUpDown18 As NumericUpDown
+    Friend WithEvents NumericUpDown17 As NumericUpDown
+    Friend WithEvents Label22 As Label
 End Class
