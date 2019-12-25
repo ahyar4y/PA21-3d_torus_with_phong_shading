@@ -533,9 +533,7 @@
         Dim v0, v1, v2 As Vector3D
         Dim p As PolygonData
         Dim vNormal(2) As Vector3D
-        Dim viewVector As Vector3D = viewer
-        viewVector.Normalize()
-
+        Dim viewVector As New Vector3D(0.0, 0.0, -1.0)
         Dim triangleNormal As Vector3D
 
         img.Clear(Color.White)
