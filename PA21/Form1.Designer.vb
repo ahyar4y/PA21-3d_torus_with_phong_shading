@@ -485,7 +485,6 @@ Partial Class Form1
         Me.NumericUpDown17.Name = "NumericUpDown17"
         Me.NumericUpDown17.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown17.TabIndex = 33
-        Me.NumericUpDown17.Value = New Decimal(New Integer() {10, 0, 0, -2147483648})
         '
         'Label22
         '
@@ -541,7 +540,7 @@ Partial Class Form1
         Me.NumericUpDown15.Name = "NumericUpDown15"
         Me.NumericUpDown15.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown15.TabIndex = 27
-        Me.NumericUpDown15.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown15.Value = New Decimal(New Integer() {2, 0, 0, 0})
         '
         'NumericUpDown14
         '

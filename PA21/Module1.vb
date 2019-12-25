@@ -326,6 +326,7 @@
         Dim cur As SETElmt = AEL
         Dim prev As SETElmt = Nothing
         Dim nA, nB, nx As Vector3D
+        Dim pixelColor As Color
 
         For i = 0 To pSET.Length - 1
             While cur IsNot Nothing
@@ -395,8 +396,10 @@
                     If cur.SETNext.xYMin - cur.xYMin <> 0 Then
                         nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
                         'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
-                        PhongIllumination(viewer, lightSource, nx, cur.pNormal, ka, ia, kd, ks, n, il) 'WHAT HAPPENED HERE
-                        'Console.WriteLine(cur.pNormal.x.ToString)
+                        pixelColor = PhongIllumination(viewer, lightSource, nx, cur.pNormal, ka, ia, kd, ks, n, il)
+
+                        img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), 1, 1)
+                        'Console.WriteLine(pixelColor.R.ToString)
                     End If
                 Next
                 cur = cur.SETNext
@@ -504,11 +507,12 @@
         Return np
     End Function
 
-    Sub PhongIllumination(viewer As Vector3D, LightSource As Vector3D, p As Vector3D, pn As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
+    Function PhongIllumination(viewer As Vector3D, LightSource As Vector3D, p As Vector3D, pn As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double) As Color
         Dim iAmb As Double
         Dim iDiff As Double
         Dim iSpec As Double
         Dim iTot As Double
+        Dim pixelColor As Color
 
         Dim lightVector As Vector3D = LightSource.Minus(p)
         lightVector.Normalize()
@@ -530,9 +534,11 @@
         End If
 
         iTot = iAmb + iDiff + iSpec
+        pixelColor = Color.FromArgb(255 * iTot, 0, 0)
+        'Console.WriteLine(pixelColor.R.ToString)
 
-        'Console.WriteLine(iTot.ToString)
-    End Sub
+        Return pixelColor
+    End Function
 
     Sub DrawObject(img As Graphics, torus As Torus3D, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
         Dim i, j As Integer
@@ -557,7 +563,7 @@
                     p = New PolygonData(torus, v0, v1, v2, vNormal)
 
                     CreateSET(img, torus.center, p, viewer, lightSource, ka, ia, kd, ks, n, il)
-                    DrawTriangle(img, torus.center, v0, v1, v2)
+                    'DrawTriangle(img, torus.center, v0, v1, v2)
                 End If
 
                 v0 = torus.mesh.n(i, j)
@@ -572,7 +578,7 @@
                     p = New PolygonData(torus, v0, v1, v2, vNormal)
 
                     CreateSET(img, torus.center, p, viewer, lightSource, ka, ia, kd, ks, n, il)
-                    DrawTriangle(img, torus.center, v0, v1, v2)
+                    'DrawTriangle(img, torus.center, v0, v1, v2)
                 End If
             Next
         Next
