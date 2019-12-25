@@ -48,6 +48,15 @@
             Return vOut
         End Function
 
+        Public Function Add(v As Vector3D) As Vector3D
+            Dim vOut As New Vector3D
+            vOut.x = x + v.x
+            vOut.y = y + v.y
+            vOut.z = z + v.z
+
+            Return vOut
+        End Function
+
         Public Function Minus(v As Vector3D) As Vector3D
             Dim vOut As New Vector3D
             vOut.x = Me.x - v.x
@@ -503,7 +512,6 @@
     Function InterpolateNormal(n1 As Vector3D, n2 As Vector3D, c1 As Double, c2 As Double, cp As Double) As Vector3D
         Dim np As Vector3D
         np = n1.Minus(n1.Minus(n2).MultiplyBy((c1 - cp) / (c1 - c2)))
-        'Console.WriteLine(np.x.ToString + " " + np.y.ToString + " " + np.z.ToString)
         Return np
     End Function
 
@@ -511,8 +519,9 @@
         Dim iAmb As Double
         Dim iDiff As Double
         Dim iSpec As Double
-        Dim iTot As Double
-        Dim pixelColor As Color
+
+        Dim objColor As Vector3D
+        Dim specColor As Vector3D
 
         Dim lightVector As Vector3D = LightSource.Minus(p)
         lightVector.Normalize()
@@ -522,22 +531,38 @@
 
         Dim reflVector As Vector3D = pn.MultiplyBy(lightVector.DotProduct(pn) * 2).Minus(lightVector)
 
-
         iAmb = ka * ia
+        objColor = New Vector3D(255 * iAmb, 0 * iAmb, 0 * iAmb)
+
         iDiff = kd * il * lightVector.DotProduct(pn)
         If iDiff < 0.0 Then
             iDiff = 0.0
+        Else
+            objColor.x += (255 * iDiff)
         End If
+
         iSpec = ks * il * Math.Pow(viewVector.DotProduct(reflVector), n)
         If iSpec < 0.0 Then
             iSpec = 0.0
         End If
+        specColor = New Vector3D(255 * iSpec, 255 * iSpec, 255 * iSpec)
+        objColor.x += specColor.x
+        objColor.y += specColor.y
+        objColor.z += specColor.z
 
-        iTot = iAmb + iDiff + iSpec
-        pixelColor = Color.FromArgb(255 * iTot, 0, 0)
-        'Console.WriteLine(pixelColor.R.ToString)
+        If objColor.x > 255 Then
+            objColor.x = 255
+        End If
+        If objColor.y > 255 Then
+            objColor.y = 255
+        End If
+        If objColor.z > 255 Then
+            objColor.z = 255
+        End If
 
-        Return pixelColor
+        'Console.WriteLine(objColor.x.ToString + " " + objColor.y.ToString + " " + objColor.z.ToString)
+
+        Return Color.FromArgb(objColor.x, objColor.y, objColor.z)
     End Function
 
     Sub DrawObject(img As Graphics, torus As Torus3D, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
