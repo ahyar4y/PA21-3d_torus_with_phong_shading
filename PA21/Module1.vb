@@ -521,7 +521,13 @@
 
         iAmb = ka * ia
         iDiff = kd * il * lightVector.DotProduct(pn)
+        If iDiff < 0.0 Then
+            iDiff = 0.0
+        End If
         iSpec = ks * il * Math.Pow(viewVector.DotProduct(reflVector), n)
+        If iSpec < 0.0 Then
+            iSpec = 0.0
+        End If
 
         iTot = iAmb + iDiff + iSpec
 
