@@ -131,8 +131,8 @@
 
         Public Sub FillMesh()
             Dim phi, theta As Double
-            Dim d_phi As Integer = 360 / CDbl(n)
-            Dim d_theta As Integer = 360 / CDbl(m)
+            Dim d_phi As Integer = Math.Ceiling(360 / CDbl(n))
+            Dim d_theta As Integer = Math.Ceiling(360 / CDbl(m))
 
             theta = -Math.PI
             phi = -Math.PI
@@ -402,7 +402,11 @@
                 'Console.WriteLine(nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
 
                 For j = cur.xYMin To cur.SETNext.xYMin
-                    If cur.SETNext.xYMin - cur.xYMin <> 0 Then
+                    If cur.SETNext.xYMin - cur.xYMin = 0 Then
+                        pixelColor = PhongIllumination(viewer, lightSource, nA, cur.pNormal, ka, ia, kd, ks, n, il)
+
+                        img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), 1, 1)
+                    Else
                         nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
                         'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
                         pixelColor = PhongIllumination(viewer, lightSource, nx, cur.pNormal, ka, ia, kd, ks, n, il)

@@ -1,4 +1,5 @@
 ﻿Public Class Form1
+    Dim bmp As Bitmap
     Dim img As Graphics
     Dim wMatrix(3, 3), rMatrix(3, 3), vMatrix(3, 3), sMatrix(3, 3) As Double
     Dim torus As Torus3D
@@ -15,35 +16,6 @@
     Private Sub PictureBox1_MouseMove(sender As Object, e As MouseEventArgs) Handles PictureBox1.MouseMove
         Label5.Text = "X: " + (e.X - centerX).ToString
         Label6.Text = "Y: " + (-1 * (e.Y - centerY)).ToString
-    End Sub
-
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        torus = New Torus3D(centerX, centerY, centerZ, CDbl(NumericUpDown1.Text), CDbl(NumericUpDown2.Text), CInt(NumericUpDown3.Text), CInt(NumericUpDown4.Text))
-        ka = CDbl(NumericUpDown11.Text)
-        ia = CDbl(NumericUpDown12.Text)
-        kd = CDbl(NumericUpDown13.Text)
-        ks = CDbl(NumericUpDown14.Text)
-        n = CInt(NumericUpDown15.Text)
-        il = CDbl(NumericUpDown16.Text)
-
-        DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
-        'InsertRowMatrix(wMatrix, 0, 1, 0, 0, 0)
-        'InsertRowMatrix(wMatrix, 1, 0, 1, 0, 0)
-        'InsertRowMatrix(wMatrix, 2, 0, 0, 1, 0)
-        'InsertRowMatrix(wMatrix, 3, 0, 0, 0, 1)
-
-        'InsertRowMatrix(vMatrix, 0, 1, 0, 0, 0)
-        'InsertRowMatrix(vMatrix, 1, 0, 1, 0, 0)
-        'InsertRowMatrix(vMatrix, 2, 0, 0, 0, 0)
-        'InsertRowMatrix(vMatrix, 3, 0, 0, 0, 1)
-
-        'InsertRowMatrix(sMatrix, 0, 1, 0, 0, PictureBox1.Width / 2)
-        'InsertRowMatrix(sMatrix, 1, 0, 1, 0, PictureBox1.Height / 2)
-        'InsertRowMatrix(sMatrix, 2, 0, 0, 1, 0)
-        'InsertRowMatrix(sMatrix, 3, 0, 0, 0, 1)
-
-        'torus.SetVertices(img, p1, p2, pI)
-        'torus.DrawTorus(img, p1, p2, pI, wMatrix, rMatrix, vMatrix, sMatrix)
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
@@ -67,6 +39,7 @@
         torus.mesh.n = mesh.v
 
         DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
+        PictureBox1.Image = bmp
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -89,15 +62,31 @@
         torus.center.z += tZ
 
         DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
+        PictureBox1.Image = bmp
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        img = PictureBox1.CreateGraphics
 
+    End Sub
+
+    Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        bmp = New Bitmap(PictureBox1.Width, PictureBox1.Height)
+        img = Graphics.FromImage(bmp)
         viewer = New Vector3D(0.0, 0.0, 4.0)
         lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
         centerX = PictureBox1.Width / 2
         centerY = PictureBox1.Height / 2
         centerZ = 0.0
+
+        torus = New Torus3D(centerX, centerY, centerZ, 100, 50, 10, 10)
+        ka = CDbl(NumericUpDown11.Text)
+        ia = CDbl(NumericUpDown12.Text)
+        kd = CDbl(NumericUpDown13.Text)
+        ks = CDbl(NumericUpDown14.Text)
+        n = CInt(NumericUpDown15.Text)
+        il = CDbl(NumericUpDown16.Text)
+
+        DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
+        PictureBox1.Image = bmp
     End Sub
 End Class
