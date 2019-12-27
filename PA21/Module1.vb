@@ -375,31 +375,12 @@
             AEL = SortSET(AEL)
             cur = AEL
 
-            'While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
-            '    img.DrawLine(New Pen(Color.SkyBlue), CInt(cur.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), CInt(cur.SETNext.xYMin + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y))
-            '    'Console.WriteLine(i.ToString + " " + (i + pNew.pYMin).ToString + " | " + cur.yMax.ToString + " " + cur.xYMin.ToString + " " + cur.dx.ToString + " " + cur.dy.ToString + " " + cur.carry.ToString + " || " + cur.SETNext.yMax.ToString + " " + cur.SETNext.xYMin.ToString + " " + cur.SETNext.dx.ToString + " " + cur.SETNext.dy.ToString + " " + cur.SETNext.carry.ToString)
-
-            '    nA = InterpolateNormal(cur.vNormal(1), cur.vNormal(0), cur.yMax, cur.yMin, i + pNew.pYMin)
-            '    nB = InterpolateNormal(cur.SETNext.vNormal(1), cur.SETNext.vNormal(0), cur.SETNext.yMax, cur.SETNext.yMin, i + pNew.pYMin)
-            '    'Console.WriteLine(nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
-            '    'Console.WriteLine(cur.pNormal.x.ToString)
-
-            '    For j = cur.xYMin To cur.SETNext.xYMin
-            '        If cur.SETNext.xYMin - cur.xYMin <> 0 Then
-            '            nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
-            '            'Console.WriteLine(nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
-            '            'PhongIllumination(viewer, lightSource, nx, cur.pNormal, ka, ia, kd, ks, n, il)
-            '        End If
-            '    Next
-
-            '    cur = cur.SETNext.SETNext
-            'End While
-
             While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
                 nA = InterpolateNormal(cur.vNormal(1), cur.vNormal(0), cur.yMax, cur.yMin, i + pNew.pYMin)
                 nB = InterpolateNormal(cur.SETNext.vNormal(1), cur.SETNext.vNormal(0), cur.SETNext.yMax, cur.SETNext.yMin, i + pNew.pYMin)
-                'Console.WriteLine(cur.vNormal(0).x.ToString + " " + cur.vNormal(0).y.ToString + " " + cur.vNormal(0).z.ToString)
-                'Console.WriteLine(nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
+                'Console.WriteLine((cur.yMax - (i + pNew.pYMin)) / (cur.yMax - cur.yMin))
+                'Console.WriteLine((i + pNew.pYMin).ToString + " " + cur.vNormal(1).x.ToString + " " + cur.vNormal(1).y.ToString + " " + cur.vNormal(1).z.ToString + " | " + cur.vNormal(0).x.ToString + " " + cur.vNormal(0).y.ToString + " " + cur.vNormal(0).z.ToString)
+                'Console.WriteLine((i + pNew.pYMin).ToString + " " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
 
                 For j = cur.xYMin To cur.SETNext.xYMin
                     If cur.SETNext.xYMin - cur.xYMin = 0 Then
@@ -415,7 +396,7 @@
                         'Console.WriteLine(pixelColor.R.ToString)
                     End If
                 Next
-                cur = cur.SETNext
+                cur = cur.SETNext.SETNext
             End While
 
             cur = AEL
@@ -515,7 +496,14 @@
 
     Function InterpolateNormal(n1 As Vector3D, n2 As Vector3D, c1 As Double, c2 As Double, cp As Double) As Vector3D
         Dim np As Vector3D
-        np = n1.Minus(n1.Minus(n2).MultiplyBy((c1 - cp) / (c1 - c2)))
+        np = n1.Minus(n2)
+        np.x *= ((c1 - cp) / (c1 - c2))
+        np.y *= ((c1 - cp) / (c1 - c2))
+        np.z *= ((c1 - cp) / (c1 - c2))
+        np = n1.Minus(np)
+        'np = n1.Minus(n1.Minus(n2).MultiplyBy((c1 - cp) / (c1 - c2)))
+        'Console.WriteLine(np.x.ToString + " " + np.y.ToString + " " + np.z.ToString)
+
         Return np
     End Function
 

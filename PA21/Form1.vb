@@ -19,6 +19,7 @@
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        img = Graphics.FromImage(bmp)
         Dim rX As Integer = CInt(NumericUpDown5.Text)
         Dim rY As Integer = CInt(NumericUpDown6.Text)
         Dim rZ As Integer = CInt(NumericUpDown7.Text)
@@ -40,9 +41,11 @@
 
         DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
+        img.Dispose()
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        img = Graphics.FromImage(bmp)
         Dim tX As Integer = CInt(NumericUpDown8.Text)
         Dim tY As Integer = CInt(NumericUpDown9.Text)
         Dim tZ As Integer = CInt(NumericUpDown10.Text)
@@ -63,10 +66,7 @@
 
         DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
-    End Sub
-
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
+        img.Dispose()
     End Sub
 
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -78,7 +78,7 @@
         centerY = PictureBox1.Height / 2
         centerZ = 0.0
 
-        torus = New Torus3D(centerX, centerY, centerZ, 100, 50, 10, 10)
+        torus = New Torus3D(centerX, centerY, centerZ, 100, 50, 30, 30)
         ka = CDbl(NumericUpDown11.Text)
         ia = CDbl(NumericUpDown12.Text)
         kd = CDbl(NumericUpDown13.Text)
@@ -88,5 +88,6 @@
 
         DrawObject(img, torus, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
+        img.Dispose()
     End Sub
 End Class
