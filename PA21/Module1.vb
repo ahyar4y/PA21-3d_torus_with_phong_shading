@@ -627,7 +627,7 @@
                     p = New PolygonData(torus, v0, v1, v2, vN)
 
                     CreateSET(img, New Vector3D(cX, cY, cZ), p, viewer, lightSource, ka, ia, kd, ks, n, il)
-                    DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
+                    'DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
                 End If
 
                 v0 = MultiplyWithMatrix(torus.mesh.n(i, j), St)
@@ -642,7 +642,7 @@
                     p = New PolygonData(torus, v0, v1, v2, vN)
 
                     CreateSET(img, New Vector3D(cX, cY, cZ), p, viewer, lightSource, ka, ia, kd, ks, n, il)
-                    DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
+                    'DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
                 End If
             Next
         Next

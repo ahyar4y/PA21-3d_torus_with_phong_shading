@@ -60,7 +60,7 @@
                 mesh.v(i, j).x = torus.mesh.n(i, j).x * rMatrix(0, 0) + torus.mesh.n(i, j).y * rMatrix(1, 0) + torus.mesh.n(i, j).z * rMatrix(2, 0)
                 mesh.v(i, j).y = torus.mesh.n(i, j).x * rMatrix(0, 1) + torus.mesh.n(i, j).y * rMatrix(1, 1) + torus.mesh.n(i, j).z * rMatrix(2, 1)
                 mesh.v(i, j).z = torus.mesh.n(i, j).x * rMatrix(0, 2) + torus.mesh.n(i, j).y * rMatrix(1, 2) + torus.mesh.n(i, j).z * rMatrix(2, 2)
-                mesh.n(i, j) = GetVertexNormal(torus.center, torus.majorR * sMatrix(0, 0), torus.minorR * sMatrix(0, 0), Math.Cos(rY * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180), Math.Sin(rX * Math.PI / 180) + Math.Sin(rY * Math.PI / 180), mesh.v(i, j))
+                mesh.n(i, j) = GetVertexNormal(torus.center, torus.majorR * sMatrix(0, 0), torus.minorR * sMatrix(0, 0), Math.Cos(rY * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180), Math.Sin(rX * Math.PI / 180) + Math.Sin(rY * Math.PI / 180), MultiplyWithMatrix(mesh.v(i, j), sMatrix))
             Next
         Next
         torus.mesh.n = mesh.v
@@ -95,7 +95,7 @@
                 mesh.v(i, j).x = torus.mesh.n(i, j).x + tX
                 mesh.v(i, j).y = torus.mesh.n(i, j).y + tY
                 mesh.v(i, j).z = torus.mesh.n(i, j).z + tZ
-                'mesh.n(i, j) = GetVertexNormal(torus.center, torus.majorR * sMatrix(0, 0), torus.minorR * sMatrix(0, 0), c_phi, s_phi, 0, mesh.v(i, j))
+                'mesh.n(i, j) = GetVertexNormal(torus.center, torus.majorR * sMatrix(0, 0), torus.minorR * sMatrix(0, 0), c_phi, s_phi, 0, MultiplyWithMatrix(mesh.v(i, j), sMatrix))
             Next
         Next
         torus.mesh.n = mesh.v
