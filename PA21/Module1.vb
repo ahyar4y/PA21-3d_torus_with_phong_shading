@@ -1,5 +1,6 @@
 ﻿Module Module1
     Public _vNormal As Mesh3D
+    Dim St(,) As Double = {{100, 0, 0, 0}, {0, 100, 0, 0}, {0, 0, 100, 0}, {0, 0, 0, 1}}
 
     Class Vector3D
         Public x, y, z As Double
@@ -147,10 +148,10 @@
                     c_theta = CDbl(Math.Cos(theta * Math.PI / 180))
                     s_theta = CDbl(Math.Sin(theta * Math.PI / 180))
 
-                    mesh.v(i, j).x = CInt((majorR + minorR * c_theta) * c_phi)
-                    mesh.v(i, j).y = CInt((majorR + minorR * c_theta) * s_phi)
-                    mesh.v(i, j).z = CInt(minorR * s_theta)
-                    _vNormal.v(i, j) = GetVertexNormal(center, majorR, minorR, c_phi, s_phi, 0, mesh.v(i, j))
+                    mesh.v(i, j).x = (majorR + minorR * c_theta) * c_phi
+                    mesh.v(i, j).y = (majorR + minorR * c_theta) * s_phi
+                    mesh.v(i, j).z = minorR * s_theta
+                    _vNormal.v(i, j) = GetVertexNormal(center, majorR * St(0, 0), minorR * St(0, 0), c_phi, s_phi, 0, MultiplyWithMatrix(mesh.v(i, j), St))
                 Next
             Next
             mesh.n = mesh.v
@@ -160,16 +161,18 @@
     Class PolygonData
         Structure PEdge
             Public p1, p2 As Vector3D
-            Public yMin, xYMin, yMax, dx, dy As Integer
+            Public yMin, xYMin, yMax, dx, dy As Double
             Public eVNormal() As Vector3D
         End Structure
 
         Public pPoint(2) As Vector3D
         Public pEdges(2) As PEdge
-        Public pYMin, pYMax As Integer
+        Public pYMin, pYMax As Double
+        Public pZMin As Double
         Public pNormal As Vector3D
         Public vNormal(2) As Vector3D
-        Public pColor As Color
+        Public d, zx, zy As Double
+        Public a, b, c As Double
 
         Public Sub New(torus As Torus3D, v0 As Vector3D, v1 As Vector3D, v2 As Vector3D, vN() As Vector3D)
             pPoint = {v0, v1, v2}
@@ -179,18 +182,28 @@
 
             pYMax = pPoint(0).y
             pYMin = pPoint(0).y
+            pZMin = pPoint(0).z
 
             For i = 0 To 2
                 ReDim pEdges(i).eVNormal(1)
 
                 If pYMin > pPoint(i).y Then
                     pYMin = pPoint(i).y
+                    pZMin = pPoint(i).z
                 End If
 
                 If pYMax < pPoint(i).y Then
                     pYMax = pPoint(i).y
                 End If
             Next
+
+            If pNormal.z = 0 Then
+                zx = 0
+                zy = 0
+            Else
+                zx = pNormal.x / pNormal.z
+                zy = pNormal.y / pNormal.z
+            End If
 
             'For i = 0 To 2
             '    Console.WriteLine(vNormal(i).x.ToString + " " + vNormal(i).y.ToString + " " + vNormal(i).z.ToString)
@@ -231,7 +244,6 @@
 
                 pEdges(i).dx = pEdges(i).p2.x - pEdges(i).p1.x
                 pEdges(i).dy = pEdges(i).p2.y - pEdges(i).p1.y
-                'Console.WriteLine(pEdges(i).p2.y - pEdges(i).p1.y)
 
                 If pEdges(i).dy < 0 Then
                     pEdges(i).dy = pEdges(i).dy * -1
@@ -242,8 +254,8 @@
     End Class
 
     Class SETElmt
-        Public yMin, yMax, xYMin, dx, dy, carry As Integer
-        Public pNormal, vNormal(1) As Vector3D
+        Public yMin, yMax, xYMin, zYmin, dx, dy, carry As Integer
+        Public vNormal(1) As Vector3D
         Public SETNext As SETElmt
     End Class
 
@@ -253,6 +265,15 @@
         matrix(i, 2) = c
         matrix(i, 3) = d
     End Sub
+
+    Function MultiplyWithMatrix(v As Vector3D, m(,) As Double) As Vector3D
+        Dim vOut As New Vector3D
+        vOut.x = CInt(v.x * m(0, 0) + v.y * m(1, 0) + v.z * m(2, 0))
+        vOut.y = CInt(v.x * m(0, 1) + v.y * m(1, 1) + v.z * m(2, 1))
+        vOut.z = CInt(v.x * m(0, 2) + v.y * m(1, 2) + v.z * m(2, 2))
+
+        Return vOut
+    End Function
 
     Function maxY(_v() As Vector3D) As Integer
         Dim temp As Integer = _v(0).y
@@ -322,7 +343,6 @@
             .dx = p.pEdges(i).dx,
             .dy = p.pEdges(i).dy,
             .carry = 0,
-            .pNormal = p.pNormal,
             .vNormal = p.pEdges(i).eVNormal
         }
 
@@ -335,6 +355,9 @@
         Dim prev As SETElmt = Nothing
         Dim nA, nB, nx As Vector3D
         Dim pixelColor As Color
+        Dim x0 As Double = pSET(0).xYMin
+        Dim zp As Double = pNew.pZMin
+        Dim zpNew As Double = zp
 
         For i = 0 To pSET.Length - 1
             While cur IsNot Nothing
@@ -377,24 +400,38 @@
             While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
                 nA = InterpolateNormal(cur.vNormal(1), cur.vNormal(0), cur.yMax, cur.yMin, i + pNew.pYMin)
                 nB = InterpolateNormal(cur.SETNext.vNormal(1), cur.SETNext.vNormal(0), cur.SETNext.yMax, cur.SETNext.yMin, i + pNew.pYMin)
-                'Console.WriteLine((i + pNew.pYMin).ToString + " " + cur.vNormal(0).x.ToString + " " + cur.vNormal(0).y.ToString + " " + cur.vNormal(0).z.ToString + " | " + cur.vNormal(1).x.ToString + " " + cur.vNormal(1).y.ToString + " " + cur.vNormal(1).z.ToString)
-                'Console.WriteLine((i + pNew.pYMin).ToString + " " + cur.SETNext.vNormal(0).x.ToString + " " + cur.SETNext.vNormal(0).y.ToString + " " + cur.SETNext.vNormal(0).z.ToString + " | " + cur.SETNext.vNormal(1).x.ToString + " " + cur.SETNext.vNormal(1).y.ToString + " " + cur.SETNext.vNormal(1).z.ToString)
-                'Console.WriteLine((i + pNew.pYMin).ToString + " " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
+                'Console.WriteLine((i + pNew.pYMin).ToString + " | " + cur.vNormal(0).x.ToString + " " + cur.vNormal(0).y.ToString + " " + cur.vNormal(0).z.ToString + " || " + cur.vNormal(1).x.ToString + " " + cur.vNormal(1).y.ToString + " " + cur.vNormal(1).z.ToString)
+                'Console.WriteLine((i + pNew.pYMin).ToString + " | " + cur.SETNext.vNormal(0).x.ToString + " " + cur.SETNext.vNormal(0).y.ToString + " " + cur.SETNext.vNormal(0).z.ToString + " || " + cur.SETNext.vNormal(1).x.ToString + " " + cur.SETNext.vNormal(1).y.ToString + " " + cur.SETNext.vNormal(1).z.ToString)
+                'Console.WriteLine(cur.yMax.ToString + " " + cur.yMin.ToString + " " + (i + pNew.pYMin).ToString + " " + ((cur.yMax - (i + pNew.pYMin)) / (cur.yMax - cur.yMin)).ToString)
+                'Console.WriteLine((i + pNew.pYMin).ToString + " | " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " || " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
+                If x0 > cur.xYMin Then
+                    For k = x0 To cur.xYMin Step -1
+                        zpNew += pNew.zx
+                    Next
+                End If
 
                 For j = cur.xYMin To cur.SETNext.xYMin
                     If cur.SETNext.xYMin - cur.xYMin = 0 Then
                         'Console.WriteLine(j.ToString + " " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString)
-                        pixelColor = PhongIllumination(viewer, lightSource, New Vector3D(j, i + pNew.pYMin, 0), nA, ka, ia, kd, ks, n, il)
-                        img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), 1, 1)
+                        pixelColor = PhongIllumination(viewer, lightSource, New Vector3D(j, i + pNew.pYMin, zpNew), nA, ka, ia, kd, ks, n, il)
+                        'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
                     Else
                         nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
                         'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
-                        pixelColor = PhongIllumination(viewer, lightSource, New Vector3D(j, i + pNew.pYMin, 0), nx, ka, ia, kd, ks, n, il)
-                        img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin + center.y) + 2 * CInt(center.y), 1, 1)
+                        pixelColor = PhongIllumination(viewer, lightSource, New Vector3D(j, i + pNew.pYMin, zpNew), nx, ka, ia, kd, ks, n, il)
+                        'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
+                    End If
+                    'Console.WriteLine(j.ToString + " " + (i + pNew.pYMin).ToString + " " + zpNew.ToString)
+                    img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin) + CInt(center.y), 1, 1)
+                    If j <> cur.SETNext.xYMin Then
+                        zpNew -= pNew.zx
                     End If
                 Next
                 cur = cur.SETNext.SETNext
             End While
+
+            zpNew = zp
+            zpNew -= (pNew.zy * (i + 1))
 
             cur = AEL
 
@@ -492,12 +529,18 @@
     End Function
 
     Function InterpolateNormal(n1 As Vector3D, n2 As Vector3D, c1 As Double, c2 As Double, cp As Double) As Vector3D
-        Dim np As Vector3D
-        np = n1.Minus(n2)
+        Dim np As New Vector3D
+        np.x = n1.x - n2.x
+        np.y = n1.y - n2.y
+        np.z = n1.z - n2.z
+
         np.x *= ((c1 - cp) / (c1 - c2))
         np.y *= ((c1 - cp) / (c1 - c2))
         np.z *= ((c1 - cp) / (c1 - c2))
-        np = n1.Minus(np)
+
+        np.x = n1.x - np.x
+        np.y = n1.y - np.y
+        np.z = n1.z - np.z
         'np = n1.Minus(n1.Minus(n2).MultiplyBy((c1 - cp) / (c1 - c2)))
         'Console.WriteLine(np.x.ToString + " " + np.y.ToString + " " + np.z.ToString)
 
@@ -538,6 +581,7 @@
             iDiff = 0
         End If
         objColor = objColor.Add(New Vector3D(255 * iDiff, 0 * iDiff, 0 * iDiff))
+        'Console.WriteLine(objColor.x.ToString + " " + objColor.y.ToString + " " + objColor.z.ToString)
 
         iSpec = ks * il * Math.Pow(viewVector.DotProduct(reflVector), n)
         If iSpec < 0.0 Then
@@ -555,14 +599,14 @@
         If objColor.z > 255 Then
             objColor.z = 255
         End If
-        'Console.WriteLine(objColor.x.ToString + " " + objColor.y.ToString + " " + objColor.z.ToString)
 
+        'Console.WriteLine(pn.x.ToString + " " + pn.y.ToString + " " + pn.z.ToString)
         Return Color.FromArgb(objColor.x, objColor.y, objColor.z)
     End Function
 
     Sub DrawObject(img As Graphics, torus As Torus3D, cX As Double, cY As Double, cZ As Double, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
         Dim i, j As Integer
-        Dim v0, v1, v2 As Vector3D
+        Dim v0, v1, v2 As New Vector3D
         Dim p As PolygonData
         Dim vN(2) As Vector3D
         Dim viewVector As New Vector3D(0.0, 0.0, -1.0)
@@ -571,9 +615,9 @@
         img.Clear(Color.White)
         For i = 0 To torus.m - 1
             For j = 0 To torus.n - 1
-                v0 = torus.mesh.n(i, j)
-                v1 = torus.mesh.n(i, j + 1)
-                v2 = torus.mesh.n(i + 1, j + 1)
+                v0 = MultiplyWithMatrix(torus.mesh.n(i, j), St)
+                v1 = MultiplyWithMatrix(torus.mesh.n(i, j + 1), St)
+                v2 = MultiplyWithMatrix(torus.mesh.n(i + 1, j + 1), St)
                 triangleNormal = ComputeTriangleNormal(v0, v1, v2)
 
                 If Not BackFaceCulling(viewVector, triangleNormal) Then
@@ -583,12 +627,12 @@
                     p = New PolygonData(torus, v0, v1, v2, vN)
 
                     CreateSET(img, New Vector3D(cX, cY, cZ), p, viewer, lightSource, ka, ia, kd, ks, n, il)
-                    'DrawTriangle(img, torus.center, v0, v1, v2)
+                    DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
                 End If
 
-                v0 = torus.mesh.n(i, j)
-                v1 = torus.mesh.n(i + 1, j + 1)
-                v2 = torus.mesh.n(i + 1, j)
+                v0 = MultiplyWithMatrix(torus.mesh.n(i, j), St)
+                v1 = MultiplyWithMatrix(torus.mesh.n(i + 1, j + 1), St)
+                v2 = MultiplyWithMatrix(torus.mesh.n(i + 1, j), St)
                 triangleNormal = ComputeTriangleNormal(v0, v1, v2)
 
                 If Not BackFaceCulling(viewVector, triangleNormal) Then
@@ -598,7 +642,7 @@
                     p = New PolygonData(torus, v0, v1, v2, vN)
 
                     CreateSET(img, New Vector3D(cX, cY, cZ), p, viewer, lightSource, ka, ia, kd, ks, n, il)
-                    'DrawTriangle(img, torus.center, v0, v1, v2)
+                    DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
                 End If
             Next
         Next
@@ -651,6 +695,6 @@
         img.DrawLine(New Pen(Color.Black), CInt(v0.x + center.x), -CInt(v0.y) + CInt(center.y), CInt(v1.x + center.x), -CInt(v1.y) + CInt(center.y))
         img.DrawLine(New Pen(Color.Black), CInt(v1.x + center.x), -CInt(v1.y) + CInt(center.y), CInt(v2.x + center.x), -CInt(v2.y) + CInt(center.y))
         img.DrawLine(New Pen(Color.Black), CInt(v2.x + center.x), -CInt(v2.y) + CInt(center.y), CInt(v0.x + center.x), -CInt(v0.y) + CInt(center.y))
-        'Console.WriteLine(CInt(v0.x).ToString + " " + CInt(v0.y).ToString + " " + CInt(v0.z).ToString + " " + CInt(v1.x).ToString + " " + CInt(v1.y).ToString + " " + CInt(v1.z).ToString + " " + CInt(v2.x).ToString + " " + CInt(v2.y).ToString + " " + CInt(v2.z).ToString)
+        'Console.WriteLine(v0.x.ToString + " " + v0.y.ToString + " " + v0.z.ToString + " | " + v1.x.ToString + " " + v1.y.ToString + " " + v1.z.ToString + " | " + v2.x.ToString + " " + v2.y.ToString + " " + v2.z.ToString)
     End Sub
 End Module

@@ -233,8 +233,8 @@ Partial Class Form1
         'NumericUpDown8
         '
         Me.NumericUpDown8.Location = New System.Drawing.Point(47, 19)
-        Me.NumericUpDown8.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
-        Me.NumericUpDown8.Minimum = New Decimal(New Integer() {1000, 0, 0, -2147483648})
+        Me.NumericUpDown8.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
+        Me.NumericUpDown8.Minimum = New Decimal(New Integer() {5, 0, 0, -2147483648})
         Me.NumericUpDown8.Name = "NumericUpDown8"
         Me.NumericUpDown8.Size = New System.Drawing.Size(42, 20)
         Me.NumericUpDown8.TabIndex = 7
@@ -242,8 +242,8 @@ Partial Class Form1
         'NumericUpDown9
         '
         Me.NumericUpDown9.Location = New System.Drawing.Point(47, 50)
-        Me.NumericUpDown9.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
-        Me.NumericUpDown9.Minimum = New Decimal(New Integer() {1000, 0, 0, -2147483648})
+        Me.NumericUpDown9.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
+        Me.NumericUpDown9.Minimum = New Decimal(New Integer() {5, 0, 0, -2147483648})
         Me.NumericUpDown9.Name = "NumericUpDown9"
         Me.NumericUpDown9.Size = New System.Drawing.Size(42, 20)
         Me.NumericUpDown9.TabIndex = 8
@@ -260,8 +260,8 @@ Partial Class Form1
         'NumericUpDown10
         '
         Me.NumericUpDown10.Location = New System.Drawing.Point(47, 84)
-        Me.NumericUpDown10.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
-        Me.NumericUpDown10.Minimum = New Decimal(New Integer() {1000, 0, 0, -2147483648})
+        Me.NumericUpDown10.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
+        Me.NumericUpDown10.Minimum = New Decimal(New Integer() {5, 0, 0, -2147483648})
         Me.NumericUpDown10.Name = "NumericUpDown10"
         Me.NumericUpDown10.Size = New System.Drawing.Size(42, 20)
         Me.NumericUpDown10.TabIndex = 9
@@ -436,7 +436,7 @@ Partial Class Form1
         Me.NumericUpDown15.Name = "NumericUpDown15"
         Me.NumericUpDown15.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown15.TabIndex = 27
-        Me.NumericUpDown15.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown15.Value = New Decimal(New Integer() {10, 0, 0, 0})
         '
         'NumericUpDown14
         '
@@ -447,7 +447,7 @@ Partial Class Form1
         Me.NumericUpDown14.Name = "NumericUpDown14"
         Me.NumericUpDown14.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown14.TabIndex = 26
-        Me.NumericUpDown14.Value = New Decimal(New Integer() {3, 0, 0, 65536})
+        Me.NumericUpDown14.Value = New Decimal(New Integer() {9, 0, 0, 65536})
         '
         'Label18
         '
@@ -512,7 +512,7 @@ Partial Class Form1
         Me.NumericUpDown13.Name = "NumericUpDown13"
         Me.NumericUpDown13.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown13.TabIndex = 19
-        Me.NumericUpDown13.Value = New Decimal(New Integer() {5, 0, 0, 65536})
+        Me.NumericUpDown13.Value = New Decimal(New Integer() {7, 0, 0, 65536})
         '
         'NumericUpDown12
         '
@@ -523,7 +523,7 @@ Partial Class Form1
         Me.NumericUpDown12.Name = "NumericUpDown12"
         Me.NumericUpDown12.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown12.TabIndex = 18
-        Me.NumericUpDown12.Value = New Decimal(New Integer() {5, 0, 0, 65536})
+        Me.NumericUpDown12.Value = New Decimal(New Integer() {1, 0, 0, 65536})
         '
         'NumericUpDown11
         '
@@ -534,7 +534,7 @@ Partial Class Form1
         Me.NumericUpDown11.Name = "NumericUpDown11"
         Me.NumericUpDown11.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown11.TabIndex = 17
-        Me.NumericUpDown11.Value = New Decimal(New Integer() {2, 0, 0, 65536})
+        Me.NumericUpDown11.Value = New Decimal(New Integer() {5, 0, 0, 65536})
         '
         'Form1
         '
