@@ -4,13 +4,13 @@
     Dim rMatrix(3, 3) As Double
     Dim sMatrix(,) As Double = {{100, 0, 0, 0}, {0, 100, 0, 0}, {0, 0, 100, 0}, {0, 0, 0, 1}}
     Dim torus As Torus3D
-    Dim lightSource As Vector3D
-    Dim viewer As Vector3D
-    Dim centerX, centerY, centerZ As Integer
+    Friend lightSource As Vector3D
+    Friend viewer As Vector3D
+    Public centerX, centerY, centerZ As Integer
     Dim rX, rY, rZ As Integer
     Dim tX, tY, tZ As Integer
-    Dim ka, ia, kd, ks, il As Double
-    Dim n As Integer
+    Public ka, ia, kd, ks, il As Double
+    Public specExp As Integer
 
     Private Sub PictureBox1_MouseMove(sender As Object, e As MouseEventArgs) Handles PictureBox1.MouseMove
         Label5.Text = "X: " + (e.X - centerX).ToString
@@ -32,10 +32,10 @@
         ia = CDbl(NumericUpDown12.Text)
         kd = CDbl(NumericUpDown13.Text)
         ks = CDbl(NumericUpDown14.Text)
-        n = CInt(NumericUpDown15.Text)
+        specExp = CInt(NumericUpDown15.Text)
         il = CDbl(NumericUpDown16.Text)
 
-        DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
+        DrawObject(img, torus)
         PictureBox1.Image = bmp
         img.Dispose()
     End Sub
@@ -68,7 +68,7 @@
         _vNormal.v = mesh2.v
 
         img = Graphics.FromImage(bmp)
-        DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
+        DrawObject(img, torus)
         PictureBox1.Image = bmp
         img.Dispose()
     End Sub
@@ -100,7 +100,7 @@
         _vNormal.v = mesh2.v
 
         img = Graphics.FromImage(bmp)
-        DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
+        DrawObject(img, torus)
         PictureBox1.Image = bmp
         img.Dispose()
     End Sub
@@ -110,13 +110,13 @@
         ia = CDbl(NumericUpDown12.Text)
         kd = CDbl(NumericUpDown13.Text)
         ks = CDbl(NumericUpDown14.Text)
-        n = CInt(NumericUpDown15.Text)
+        specExp = CInt(NumericUpDown15.Text)
         il = CDbl(NumericUpDown16.Text)
         lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
         lightSource = MultiplyWithMatrix(lightSource, sMatrix)
 
         img = Graphics.FromImage(bmp)
-        DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
+        DrawObject(img, torus)
         PictureBox1.Image = bmp
         img.Dispose()
     End Sub

@@ -281,31 +281,7 @@
         Return vOut
     End Function
 
-    Function maxY(_v() As Vector3D) As Integer
-        Dim temp As Integer = _v(0).y
-
-        For i = 0 To 2
-            If temp < _v(i).y Then
-                temp = _v(i).y
-            End If
-        Next
-
-        Return temp
-    End Function
-
-    Function minY(_v() As Vector3D) As Integer
-        Dim temp As Integer = _v(0).y
-
-        For i = 0 To 2
-            If temp > _v(i).y Then
-                temp = _v(i).y
-            End If
-        Next
-
-        Return temp
-    End Function
-
-    Sub CreateSET(img As Graphics, center As Vector3D, p As PolygonData, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
+    Sub CreateSET(img As Graphics, center As Vector3D, p As PolygonData)
         Dim SETrange As Integer = p.pYMax - p.pYMin + 1
         Dim pSET(SETrange - 1) As SETElmt
         Dim temp As SETElmt
@@ -338,7 +314,7 @@
         '    'Console.WriteLine(pSET(i).vNormal(0).x.ToString + " " + pSET(i).vNormal(0).y.ToString + " " + pSET(i).vNormal(0).z.ToString)
         'Next
 
-        FillPolygon(img, center, p, pSET, viewer, lightSource, ka, ia, kd, ks, n, il)
+        FillPolygon(img, center, p, pSET)
     End Sub
 
     Function InsertSET(p As PolygonData, i As Integer) As SETElmt
@@ -355,7 +331,7 @@
         Return temp
     End Function
 
-    Sub FillPolygon(img As Graphics, center As Vector3D, pNew As PolygonData, pSET() As SETElmt, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
+    Sub FillPolygon(img As Graphics, center As Vector3D, pNew As PolygonData, pSET() As SETElmt)
         Dim AEL As SETElmt
         Dim cur As SETElmt = AEL
         Dim prev As SETElmt = Nothing
@@ -419,12 +395,12 @@
                 For j = cur.xYMin To cur.SETNext.xYMin
                     If cur.SETNext.xYMin - cur.xYMin = 0 Then
                         'Console.WriteLine(j.ToString + " " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString)
-                        pixelColor = PhongIllumination(viewer, lightSource, New Vector3D(j, i + pNew.pYMin, zpNew), nA, ka, ia, kd, ks, n, il)
+                        pixelColor = PhongIllumination(New Vector3D(j, i + pNew.pYMin, zpNew), nA)
                         'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
                     Else
                         nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
                         'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
-                        pixelColor = PhongIllumination(viewer, lightSource, New Vector3D(j, i + pNew.pYMin, zpNew), nx, ka, ia, kd, ks, n, il)
+                        pixelColor = PhongIllumination(New Vector3D(j, i + pNew.pYMin, zpNew), nx)
                         'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
                     End If
                     'Console.WriteLine(j.ToString + " " + (i + pNew.pYMin).ToString + " " + zpNew.ToString)
@@ -547,13 +523,12 @@
         np.x = n1.x - np.x
         np.y = n1.y - np.y
         np.z = n1.z - np.z
-        'np = n1.Minus(n1.Minus(n2).MultiplyBy((c1 - cp) / (c1 - c2)))
         'Console.WriteLine(np.x.ToString + " " + np.y.ToString + " " + np.z.ToString)
 
         Return np
     End Function
 
-    Function PhongIllumination(viewer As Vector3D, LightSource As Vector3D, p As Vector3D, pn As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double) As Color
+    Function PhongIllumination(p As Vector3D, pn As Vector3D) As Color
         Dim iAmb As Double
         Dim iDiff As Double
         Dim iSpec As Double
@@ -562,15 +537,15 @@
         Dim specColor As Vector3D
 
         Dim lightVector As New Vector3D
-        lightVector.x = LightSource.x - p.x
-        lightVector.y = LightSource.y - p.y
-        lightVector.z = LightSource.z - p.z
+        lightVector.x = Form1.lightSource.x - p.x
+        lightVector.y = Form1.lightSource.y - p.y
+        lightVector.z = Form1.lightSource.z - p.z
         lightVector.Normalize()
 
         Dim viewVector As New Vector3D
-        viewVector.x = viewer.x - p.x
-        viewVector.y = viewer.y - p.y
-        viewVector.z = viewer.z - p.z
+        viewVector.x = Form1.viewer.x - p.x
+        viewVector.y = Form1.viewer.y - p.y
+        viewVector.z = Form1.viewer.z - p.z
         viewVector.Normalize()
 
         Dim reflVector As New Vector3D
@@ -579,17 +554,16 @@
         reflVector.z = pn.z * (lightVector.DotProduct(pn) * 2)
         reflVector = reflVector.Minus(lightVector)
 
-        iAmb = ka * ia
+        iAmb = Form1.ka * Form1.ia
         objColor = New Vector3D(255 * iAmb, 0 * iAmb, 0 * iAmb)
 
-        iDiff = kd * il * lightVector.DotProduct(pn)
+        iDiff = Form1.kd * Form1.il * lightVector.DotProduct(pn)
         If iDiff < 0.0 Then
             iDiff = 0
         End If
         objColor = objColor.Add(New Vector3D(255 * iDiff, 0 * iDiff, 0 * iDiff))
-        'Console.WriteLine(objColor.x.ToString + " " + objColor.y.ToString + " " + objColor.z.ToString)
 
-        iSpec = ks * il * Math.Pow(viewVector.DotProduct(reflVector), n)
+        iSpec = Form1.ks * Form1.il * Math.Pow(viewVector.DotProduct(reflVector), Form1.specExp)
         If iSpec < 0.0 Then
             iSpec = 0
         End If
@@ -605,14 +579,14 @@
         If objColor.z > 255 Then
             objColor.z = 255
         End If
+        'Console.WriteLine(objColor.x.ToString + " " + objColor.y.ToString + " " + objColor.z.ToString)
 
-        'Console.WriteLine(pn.x.ToString + " " + pn.y.ToString + " " + pn.z.ToString)
         Return Color.FromArgb(objColor.x, objColor.y, objColor.z)
     End Function
 
-    Sub DrawObject(img As Graphics, torus As Torus3D, cX As Double, cY As Double, cZ As Double, viewer As Vector3D, lightSource As Vector3D, ka As Double, ia As Double, kd As Double, ks As Double, n As Integer, il As Double)
+    Sub DrawObject(img As Graphics, torus As Torus3D)
         Dim i, j As Integer
-        Dim v0, v1, v2 As New Vector3D
+        Dim v0, v1, v2 As Vector3D
         Dim p As PolygonData
         Dim vN(2) As Vector3D
         Dim viewVector As New Vector3D(0.0, 0.0, -1.0)
@@ -632,7 +606,7 @@
                     vN(2) = _vNormal.v(i + 1, j + 1)
                     p = New PolygonData(torus, v0, v1, v2, vN)
 
-                    CreateSET(img, New Vector3D(cX, cY, cZ), p, viewer, lightSource, ka, ia, kd, ks, n, il)
+                    CreateSET(img, New Vector3D(Form1.centerX, Form1.centerY, Form1.centerZ), p)
                     'DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
                 End If
 
@@ -647,7 +621,7 @@
                     vN(2) = _vNormal.v(i + 1, j)
                     p = New PolygonData(torus, v0, v1, v2, vN)
 
-                    CreateSET(img, New Vector3D(cX, cY, cZ), p, viewer, lightSource, ka, ia, kd, ks, n, il)
+                    CreateSET(img, New Vector3D(Form1.centerX, Form1.centerY, Form1.centerZ), p)
                     'DrawTriangle(img, New Vector3D(cX, cY, cZ), v0, v1, v2)
                 End If
             Next
