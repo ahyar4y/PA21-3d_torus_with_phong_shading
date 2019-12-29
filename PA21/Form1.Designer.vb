@@ -66,6 +66,7 @@ Partial Class Form1
         Me.NumericUpDown13 = New System.Windows.Forms.NumericUpDown()
         Me.NumericUpDown12 = New System.Windows.Forms.NumericUpDown()
         Me.NumericUpDown11 = New System.Windows.Forms.NumericUpDown()
+        Me.Button1 = New System.Windows.Forms.Button()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown6, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -286,6 +287,7 @@ Partial Class Form1
         '
         'GroupBox5
         '
+        Me.GroupBox5.Controls.Add(Me.Button1)
         Me.GroupBox5.Controls.Add(Me.Label26)
         Me.GroupBox5.Controls.Add(Me.Label23)
         Me.GroupBox5.Controls.Add(Me.Label24)
@@ -536,6 +538,15 @@ Partial Class Form1
         Me.NumericUpDown11.TabIndex = 17
         Me.NumericUpDown11.Value = New Decimal(New Integer() {5, 0, 0, 65536})
         '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(160, 230)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(65, 29)
+        Me.Button1.TabIndex = 37
+        Me.Button1.Text = "Set"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -620,4 +631,5 @@ Partial Class Form1
     Friend WithEvents NumericUpDown18 As NumericUpDown
     Friend WithEvents NumericUpDown17 As NumericUpDown
     Friend WithEvents Label22 As Label
+    Friend WithEvents Button1 As Button
 End Class

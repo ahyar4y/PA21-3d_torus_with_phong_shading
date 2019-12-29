@@ -12,10 +12,6 @@
     Dim ka, ia, kd, ks, il As Double
     Dim n As Integer
 
-    Private Sub NumericUpDown_ValueChanged(sender As Object, e As EventArgs) Handles NumericUpDown11.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown16.ValueChanged
-
-    End Sub
-
     Private Sub PictureBox1_MouseMove(sender As Object, e As MouseEventArgs) Handles PictureBox1.MouseMove
         Label5.Text = "X: " + (e.X - centerX).ToString
         Label6.Text = "Y: " + (-1 * (e.Y - centerY)).ToString
@@ -25,7 +21,8 @@
         bmp = New Bitmap(PictureBox1.Width, PictureBox1.Height)
         img = Graphics.FromImage(bmp)
         viewer = New Vector3D(0.0, 0.0, 10.0)
-        lightSource = New Vector3D(CDbl(NumericUpDown17.Text) * 20, CDbl(NumericUpDown18.Text) * 20, CDbl(NumericUpDown19.Text) * 20)
+        lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
+        lightSource = MultiplyWithMatrix(lightSource, sMatrix)
         centerX = PictureBox1.Width / 2
         centerY = PictureBox1.Height / 2
         centerZ = 0.0
@@ -44,7 +41,6 @@
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        img = Graphics.FromImage(bmp)
         rX = CInt(NumericUpDown5.Text)
         rY = CInt(NumericUpDown6.Text)
         rZ = CInt(NumericUpDown7.Text)
@@ -71,13 +67,13 @@
         torus.smallCenter.n = mesh.n
         _vNormal.v = mesh2.v
 
+        img = Graphics.FromImage(bmp)
         DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
         img.Dispose()
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        img = Graphics.FromImage(bmp)
         tX = CInt(NumericUpDown8.Text)
         tY = CInt(NumericUpDown9.Text)
         tZ = CInt(NumericUpDown10.Text)
@@ -103,6 +99,23 @@
         torus.smallCenter.n = mesh.n
         _vNormal.v = mesh2.v
 
+        img = Graphics.FromImage(bmp)
+        DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
+        PictureBox1.Image = bmp
+        img.Dispose()
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        ka = CDbl(NumericUpDown11.Text)
+        ia = CDbl(NumericUpDown12.Text)
+        kd = CDbl(NumericUpDown13.Text)
+        ks = CDbl(NumericUpDown14.Text)
+        n = CInt(NumericUpDown15.Text)
+        il = CDbl(NumericUpDown16.Text)
+        lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
+        lightSource = MultiplyWithMatrix(lightSource, sMatrix)
+
+        img = Graphics.FromImage(bmp)
         DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
         img.Dispose()
