@@ -108,6 +108,7 @@
 
     Class Torus3D
         Public center As Vector3D
+        Public smallCenter As Mesh3D
         Public majorR, minorR As Double
         Public m, n As Integer
         Public c_theta, s_theta, c_phi, s_phi As Double
@@ -125,6 +126,7 @@
         Private Sub InitMesh()
             mesh = New Mesh3D(m, n)
             _vNormal = New Mesh3D(m, n)
+            smallCenter = New Mesh3D(m, n)
             FillMesh()
         End Sub
 
@@ -151,10 +153,14 @@
                     mesh.v(i, j).x = (majorR + minorR * c_theta) * c_phi
                     mesh.v(i, j).y = (majorR + minorR * c_theta) * s_phi
                     mesh.v(i, j).z = minorR * s_theta
-                    _vNormal.v(i, j) = GetVertexNormal(center, majorR * St(0, 0), minorR * St(0, 0), c_phi, s_phi, 0, MultiplyWithMatrix(mesh.v(i, j), St))
+                    smallCenter.v(i, j).x = center.x + majorR * c_phi
+                    smallCenter.v(i, j).y = center.y + majorR * s_phi
+                    smallCenter.v(i, j).z = center.z
+                    _vNormal.v(i, j) = GetVertexNormal(MultiplyWithMatrix(smallCenter.v(i, j), St), minorR * St(0, 0), MultiplyWithMatrix(mesh.v(i, j), St))
                 Next
             Next
             mesh.n = mesh.v
+            smallCenter.n = smallCenter.v
         End Sub
     End Class
 
@@ -517,12 +523,12 @@
         Return sorted
     End Function
 
-    Function GetVertexNormal(center As Vector3D, majorR As Integer, minorR As Integer, c_phi As Double, s_phi As Double, s_theta As Double, v As Vector3D) As Vector3D
+    Function GetVertexNormal(center As Vector3D, minorR As Integer, v As Vector3D) As Vector3D
         Dim vNormal As New Vector3D
 
-        vNormal.x = (v.x - (center.x + majorR * c_phi)) / minorR
-        vNormal.y = (v.y - (center.y + majorR * s_phi)) / minorR
-        vNormal.z = (v.z - (center.z + majorR * s_theta)) / minorR
+        vNormal.x = (v.x - center.x) / minorR
+        vNormal.y = (v.y - center.y) / minorR
+        vNormal.z = (v.z - center.z) / minorR
         'Console.WriteLine(vNormal.x.ToString + " " + vNormal.y.ToString + " " + vNormal.z.ToString)
 
         Return vNormal

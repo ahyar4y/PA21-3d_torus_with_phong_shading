@@ -55,16 +55,21 @@
         SetMatrixRow(rMatrix, 3, 0, 0, 0, 1)
 
         Dim mesh As New Mesh3D(torus.m, torus.n)
+        Dim mesh2 As New Mesh3D(torus.m, torus.n)
         For i = 0 To torus.m
             For j = 0 To torus.n
                 mesh.v(i, j).x = torus.mesh.n(i, j).x * rMatrix(0, 0) + torus.mesh.n(i, j).y * rMatrix(1, 0) + torus.mesh.n(i, j).z * rMatrix(2, 0)
                 mesh.v(i, j).y = torus.mesh.n(i, j).x * rMatrix(0, 1) + torus.mesh.n(i, j).y * rMatrix(1, 1) + torus.mesh.n(i, j).z * rMatrix(2, 1)
                 mesh.v(i, j).z = torus.mesh.n(i, j).x * rMatrix(0, 2) + torus.mesh.n(i, j).y * rMatrix(1, 2) + torus.mesh.n(i, j).z * rMatrix(2, 2)
-                mesh.n(i, j) = GetVertexNormal(torus.center, torus.majorR * sMatrix(0, 0), torus.minorR * sMatrix(0, 0), Math.Cos(rY * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180), Math.Cos(rX * Math.PI / 180) + Math.Cos(rZ * Math.PI / 180), Math.Sin(rX * Math.PI / 180) + Math.Sin(rY * Math.PI / 180), MultiplyWithMatrix(mesh.v(i, j), sMatrix))
+                mesh.n(i, j).x = torus.smallCenter.n(i, j).x * rMatrix(0, 0) + torus.smallCenter.n(i, j).y * rMatrix(1, 0) + torus.smallCenter.n(i, j).z * rMatrix(2, 0)
+                mesh.n(i, j).y = torus.smallCenter.n(i, j).x * rMatrix(0, 1) + torus.smallCenter.n(i, j).y * rMatrix(1, 1) + torus.smallCenter.n(i, j).z * rMatrix(2, 1)
+                mesh.n(i, j).z = torus.smallCenter.n(i, j).x * rMatrix(0, 2) + torus.smallCenter.n(i, j).y * rMatrix(1, 2) + torus.smallCenter.n(i, j).z * rMatrix(2, 2)
+                mesh2.v(i, j) = GetVertexNormal(MultiplyWithMatrix(mesh.n(i, j), sMatrix), torus.minorR * sMatrix(0, 0), MultiplyWithMatrix(mesh.v(i, j), sMatrix))
             Next
         Next
         torus.mesh.n = mesh.v
-        _vNormal.v = mesh.n
+        torus.smallCenter.n = mesh.n
+        _vNormal.v = mesh2.v
 
         DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
@@ -81,25 +86,22 @@
         torus.center.y += tY
         torus.center.z += tZ
 
-        Dim phi, d_phi, s_phi, c_phi As Double
-        d_phi = Math.Ceiling(360 / torus.m)
-        phi = -Math.PI
-
         Dim mesh As New Mesh3D(torus.m, torus.n)
+        Dim mesh2 As New Mesh3D(torus.m, torus.n)
         For i = 0 To torus.m
-            phi += d_phi
-
-            c_phi = CDbl(Math.Cos(phi * Math.PI / 180))
-            s_phi = CDbl(Math.Sin(phi * Math.PI / 180))
             For j = 0 To torus.n
                 mesh.v(i, j).x = torus.mesh.n(i, j).x + tX
                 mesh.v(i, j).y = torus.mesh.n(i, j).y + tY
                 mesh.v(i, j).z = torus.mesh.n(i, j).z + tZ
-                'mesh.n(i, j) = GetVertexNormal(torus.center, torus.majorR * sMatrix(0, 0), torus.minorR * sMatrix(0, 0), c_phi, s_phi, 0, MultiplyWithMatrix(mesh.v(i, j), sMatrix))
+                mesh.n(i, j).x = torus.smallCenter.n(i, j).x + tX
+                mesh.n(i, j).y = torus.smallCenter.n(i, j).y + tY
+                mesh.n(i, j).z = torus.smallCenter.n(i, j).z + tZ
+                mesh2.v(i, j) = GetVertexNormal(MultiplyWithMatrix(mesh.n(i, j), sMatrix), torus.minorR * sMatrix(0, 0), MultiplyWithMatrix(mesh.v(i, j), sMatrix))
             Next
         Next
         torus.mesh.n = mesh.v
-        '_vNormal.v = mesh.n
+        torus.smallCenter.n = mesh.n
+        _vNormal.v = mesh2.v
 
         DrawObject(img, torus, centerX, centerY, centerZ, viewer, lightSource, ka, ia, kd, ks, n, il)
         PictureBox1.Image = bmp
