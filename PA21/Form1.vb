@@ -20,7 +20,7 @@
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         bmp = New Bitmap(PictureBox1.Width, PictureBox1.Height)
         img = Graphics.FromImage(bmp)
-        viewer = New Vector3D(0.0, 0.0, 10.0)
+        viewer = MultiplyWithMatrix(New Vector3D(0.0, 0.0, 1.0), sMatrix)
         lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
         lightSource = MultiplyWithMatrix(lightSource, sMatrix)
         centerX = PictureBox1.Width / 2
