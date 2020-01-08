@@ -8,7 +8,7 @@
     Friend viewer As Vector3D
     Public centerX, centerY, centerZ As Integer
     Dim rX, rY, rZ As Integer
-    Dim tX, tY, tZ As Integer
+    Dim tX, tY, tZ As Double
     Public ka, ia, kd, ks, il As Double
     Public specExp As Integer
 
@@ -74,9 +74,9 @@
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        tX = CInt(NumericUpDown8.Text)
-        tY = CInt(NumericUpDown9.Text)
-        tZ = CInt(NumericUpDown10.Text)
+        tX = CDbl(NumericUpDown8.Text)
+        tY = CDbl(NumericUpDown9.Text)
+        tZ = CDbl(NumericUpDown10.Text)
 
         torus.center.x += tX
         torus.center.y += tY

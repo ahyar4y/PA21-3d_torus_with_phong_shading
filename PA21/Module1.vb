@@ -177,8 +177,7 @@
         Public pZMin As Double
         Public pNormal As Vector3D
         Public vNormal(2) As Vector3D
-        Public d, zx, zy As Double
-        Public a, b, c As Double
+        Public zx, zy As Double
 
         Public Sub New(torus As Torus3D, v0 As Vector3D, v1 As Vector3D, v2 As Vector3D, vN() As Vector3D)
             pPoint = {v0, v1, v2}
@@ -337,6 +336,7 @@
         Dim prev As SETElmt = Nothing
         Dim nA, nB, nx As Vector3D
         Dim pixelColor As Color
+        Dim p As Vector3D
         Dim x0 As Double = pSET(0).xYMin
         Dim zp As Double = pNew.pZMin
         Dim zpNew As Double = zp
@@ -393,21 +393,20 @@
                 End If
 
                 For j = cur.xYMin To cur.SETNext.xYMin
-                    If cur.SETNext.xYMin - cur.xYMin = 0 Then
+                    p = New Vector3D(j, i + pNew.pYMin, CInt(zpNew))
+                    If cur.SETNext.xYMin - cur.xYMin <> 0 Then
                         'Console.WriteLine(j.ToString + " " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString)
-                        pixelColor = PhongIllumination(New Vector3D(j, i + pNew.pYMin, zpNew), nA)
-                        'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
-                    Else
+                        'pixelColor = PhongIllumination(p, nA)
+                        'Console.WriteLine(pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
+                        'Else
                         nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
                         'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
-                        pixelColor = PhongIllumination(New Vector3D(j, i + pNew.pYMin, zpNew), nx)
+                        pixelColor = PhongIllumination(p, nx)
                         'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
                     End If
                     'Console.WriteLine(j.ToString + " " + (i + pNew.pYMin).ToString + " " + zpNew.ToString)
                     img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin) + CInt(center.y), 1, 1)
-                    If j <> cur.SETNext.xYMin Then
-                        zpNew -= pNew.zx
-                    End If
+                    zpNew -= pNew.zx
                 Next
                 cur = cur.SETNext.SETNext
             End While
@@ -532,6 +531,7 @@
         Dim iAmb As Double
         Dim iDiff As Double
         Dim iSpec As Double
+        Dim itot As Double
 
         Dim objColor As Vector3D
         Dim specColor As Vector3D
@@ -568,8 +568,12 @@
             iSpec = 0
         End If
 
-        specColor = New Vector3D(255 * iSpec, 255 * iSpec, 255 * iSpec)
+        specColor = New Vector3D(171 * iSpec, 171 * iSpec, 171 * iSpec)
         objColor = objColor.Add(specColor)
+
+        'itot = iAmb + iDiff + iSpec
+        'objColor = New Vector3D(255 * itot, 0 * itot, 0 * itot)
+
         If objColor.x > 255 Then
             objColor.x = 255
         End If
@@ -579,6 +583,8 @@
         If objColor.z > 255 Then
             objColor.z = 255
         End If
+
+        'Console.WriteLine(iDiff)
         'Console.WriteLine(objColor.x.ToString + " " + objColor.y.ToString + " " + objColor.z.ToString)
 
         Return Color.FromArgb(objColor.x, objColor.y, objColor.z)
