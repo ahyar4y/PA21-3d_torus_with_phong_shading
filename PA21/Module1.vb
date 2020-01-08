@@ -505,17 +505,10 @@
 
     Function InterpolateNormal(n1 As Vector3D, n2 As Vector3D, c1 As Double, c2 As Double, cp As Double) As Vector3D
         Dim np As New Vector3D
-        np.x = n1.x - n2.x
-        np.y = n1.y - n2.y
-        np.z = n1.z - n2.z
 
-        np.x *= ((c1 - cp) / (c1 - c2))
-        np.y *= ((c1 - cp) / (c1 - c2))
-        np.z *= ((c1 - cp) / (c1 - c2))
-
-        np.x = n1.x - np.x
-        np.y = n1.y - np.y
-        np.z = n1.z - np.z
+        np = n1.Minus(n2)
+        np.MultiplyBy((c1 - cp) / (c1 - c2))
+        np = n1.Minus(np)
         'Console.WriteLine(np.x.ToString + " " + np.y.ToString + " " + np.z.ToString)
 
         Return np
@@ -530,15 +523,11 @@
         Dim specColor As Vector3D
 
         Dim lightVector As New Vector3D
-        lightVector.x = Form1.lightSource.x - p.x
-        lightVector.y = Form1.lightSource.y - p.y
-        lightVector.z = Form1.lightSource.z - p.z
+        lightVector = Form1.lightSource.Minus(p)
         lightVector.Normalize()
 
         Dim viewVector As New Vector3D
-        viewVector.x = Form1.viewer.x - p.x
-        viewVector.y = Form1.viewer.y - p.y
-        viewVector.z = Form1.viewer.z - p.z
+        viewVector = Form1.viewer.Minus(p)
         viewVector.Normalize()
 
         Dim reflVector As New Vector3D
@@ -563,7 +552,7 @@
             iSpec = Form1.ks * Form1.il * Math.Pow(viewVector.DotProduct(reflVector), Form1.specExp)
         End If
 
-        specColor = New Vector3D(171 * iSpec, 171 * iSpec, 171 * iSpec)
+        specColor = New Vector3D(220 * iSpec, 220 * iSpec, 220 * iSpec)
         objColor = objColor.Add(specColor)
 
         If objColor.x > 255 Then
