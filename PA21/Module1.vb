@@ -177,8 +177,7 @@
         Public pZMin As Double
         Public pNormal As Vector3D
         Public vNormal(2) As Vector3D
-        Public d, zx, zy As Double
-        Public a, b, c As Double
+        Public zx, zy As Double
 
         Public Sub New(torus As Torus3D, v0 As Vector3D, v1 As Vector3D, v2 As Vector3D, vN() As Vector3D)
             pPoint = {v0, v1, v2}
@@ -210,10 +209,6 @@
                 zx = pNormal.x / pNormal.z
                 zy = pNormal.y / pNormal.z
             End If
-
-            'For i = 0 To 2
-            '    Console.WriteLine(vNormal(i).x.ToString + " " + vNormal(i).y.ToString + " " + vNormal(i).z.ToString)
-            'Next
 
             'Console.WriteLine("Polygon Y Min: " & pYMin.ToString)
             'Console.WriteLine("Polygon Y Max: " & pYMax.ToString)
@@ -337,6 +332,7 @@
         Dim prev As SETElmt = Nothing
         Dim nA, nB, nx As Vector3D
         Dim pixelColor As Color
+        Dim p As Vector3D
         Dim x0 As Double = pSET(0).xYMin
         Dim zp As Double = pNew.pZMin
         Dim zpNew As Double = zp
@@ -382,32 +378,29 @@
             While cur IsNot Nothing AndAlso cur.SETNext IsNot Nothing
                 nA = InterpolateNormal(cur.vNormal(1), cur.vNormal(0), cur.yMax, cur.yMin, i + pNew.pYMin)
                 nB = InterpolateNormal(cur.SETNext.vNormal(1), cur.SETNext.vNormal(0), cur.SETNext.yMax, cur.SETNext.yMin, i + pNew.pYMin)
-                'Console.WriteLine((i + pNew.pYMin).ToString + " | " + cur.vNormal(0).x.ToString + " " + cur.vNormal(0).y.ToString + " " + cur.vNormal(0).z.ToString + " || " + cur.vNormal(1).x.ToString + " " + cur.vNormal(1).y.ToString + " " + cur.vNormal(1).z.ToString)
-                'Console.WriteLine((i + pNew.pYMin).ToString + " | " + cur.SETNext.vNormal(0).x.ToString + " " + cur.SETNext.vNormal(0).y.ToString + " " + cur.SETNext.vNormal(0).z.ToString + " || " + cur.SETNext.vNormal(1).x.ToString + " " + cur.SETNext.vNormal(1).y.ToString + " " + cur.SETNext.vNormal(1).z.ToString)
-                'Console.WriteLine(cur.yMax.ToString + " " + cur.yMin.ToString + " " + (i + pNew.pYMin).ToString + " " + ((cur.yMax - (i + pNew.pYMin)) / (cur.yMax - cur.yMin)).ToString)
                 'Console.WriteLine((i + pNew.pYMin).ToString + " | " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString + " || " + nB.x.ToString + " " + nB.y.ToString + " " + nB.z.ToString)
+
                 If x0 > cur.xYMin Then
                     For k = x0 To cur.xYMin Step -1
                         zpNew += pNew.zx
                     Next
+                ElseIf x0 < cur.xYMin Then
+                    For k = cur.xYMin To x0
+                        zpNew -= pNew.zx
+                    Next
                 End If
 
                 For j = cur.xYMin To cur.SETNext.xYMin
-                    If cur.SETNext.xYMin - cur.xYMin = 0 Then
-                        'Console.WriteLine(j.ToString + " " + nA.x.ToString + " " + nA.y.ToString + " " + nA.z.ToString)
-                        pixelColor = PhongIllumination(New Vector3D(j, i + pNew.pYMin, zpNew), nA)
-                        'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
-                    Else
+                    p = New Vector3D(j, i + pNew.pYMin, CInt(zpNew))
+                    If cur.SETNext.xYMin - cur.xYMin <> 0 Then
                         nx = InterpolateNormal(nB, nA, cur.SETNext.xYMin, cur.xYMin, j)
                         'Console.WriteLine(j.ToString + " " + nx.x.ToString + " " + nx.y.ToString + " " + nx.z.ToString)
-                        pixelColor = PhongIllumination(New Vector3D(j, i + pNew.pYMin, zpNew), nx)
+                        pixelColor = PhongIllumination(p, nx)
                         'Console.WriteLine(j.ToString + " " + pixelColor.R.ToString + " " + pixelColor.G.ToString + " " + pixelColor.B.ToString)
                     End If
-                    'Console.WriteLine(j.ToString + " " + (i + pNew.pYMin).ToString + " " + zpNew.ToString)
+
                     img.DrawRectangle(New Pen(pixelColor), CInt(j + center.x), -CInt(i + pNew.pYMin) + CInt(center.y), 1, 1)
-                    If j <> cur.SETNext.xYMin Then
-                        zpNew -= pNew.zx
-                    End If
+                    zpNew -= pNew.zx
                 Next
                 cur = cur.SETNext.SETNext
             End While
@@ -557,19 +550,22 @@
         iAmb = Form1.ka * Form1.ia
         objColor = New Vector3D(255 * iAmb, 0 * iAmb, 0 * iAmb)
 
-        iDiff = Form1.kd * Form1.il * lightVector.DotProduct(pn)
-        If iDiff < 0.0 Then
+        If lightVector.DotProduct(pn) < 0 Then
             iDiff = 0
+        Else
+            iDiff = Form1.kd * Form1.il * lightVector.DotProduct(pn)
         End If
         objColor = objColor.Add(New Vector3D(255 * iDiff, 0 * iDiff, 0 * iDiff))
 
-        iSpec = Form1.ks * Form1.il * Math.Pow(viewVector.DotProduct(reflVector), Form1.specExp)
-        If iSpec < 0.0 Then
-            iSpec = 0
+        If viewVector.DotProduct(reflVector) < 0 Then
+            iSpec = Form1.ks * Form1.il * Math.Pow(0, Form1.specExp)
+        Else
+            iSpec = Form1.ks * Form1.il * Math.Pow(viewVector.DotProduct(reflVector), Form1.specExp)
         End If
 
-        specColor = New Vector3D(255 * iSpec, 255 * iSpec, 255 * iSpec)
+        specColor = New Vector3D(171 * iSpec, 171 * iSpec, 171 * iSpec)
         objColor = objColor.Add(specColor)
+
         If objColor.x > 255 Then
             objColor.x = 255
         End If

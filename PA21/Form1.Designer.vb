@@ -43,6 +43,7 @@ Partial Class Form1
         Me.Label11 = New System.Windows.Forms.Label()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.Label26 = New System.Windows.Forms.Label()
         Me.Label23 = New System.Windows.Forms.Label()
         Me.Label24 = New System.Windows.Forms.Label()
@@ -66,7 +67,6 @@ Partial Class Form1
         Me.NumericUpDown13 = New System.Windows.Forms.NumericUpDown()
         Me.NumericUpDown12 = New System.Windows.Forms.NumericUpDown()
         Me.NumericUpDown11 = New System.Windows.Forms.NumericUpDown()
-        Me.Button1 = New System.Windows.Forms.Button()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown6, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -233,18 +233,22 @@ Partial Class Form1
         '
         'NumericUpDown8
         '
+        Me.NumericUpDown8.DecimalPlaces = 1
+        Me.NumericUpDown8.Increment = New Decimal(New Integer() {5, 0, 0, 65536})
         Me.NumericUpDown8.Location = New System.Drawing.Point(47, 19)
-        Me.NumericUpDown8.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
-        Me.NumericUpDown8.Minimum = New Decimal(New Integer() {5, 0, 0, -2147483648})
+        Me.NumericUpDown8.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown8.Minimum = New Decimal(New Integer() {1, 0, 0, -2147483648})
         Me.NumericUpDown8.Name = "NumericUpDown8"
         Me.NumericUpDown8.Size = New System.Drawing.Size(42, 20)
         Me.NumericUpDown8.TabIndex = 7
         '
         'NumericUpDown9
         '
+        Me.NumericUpDown9.DecimalPlaces = 1
+        Me.NumericUpDown9.Increment = New Decimal(New Integer() {5, 0, 0, 65536})
         Me.NumericUpDown9.Location = New System.Drawing.Point(47, 50)
-        Me.NumericUpDown9.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
-        Me.NumericUpDown9.Minimum = New Decimal(New Integer() {5, 0, 0, -2147483648})
+        Me.NumericUpDown9.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown9.Minimum = New Decimal(New Integer() {1, 0, 0, -2147483648})
         Me.NumericUpDown9.Name = "NumericUpDown9"
         Me.NumericUpDown9.Size = New System.Drawing.Size(42, 20)
         Me.NumericUpDown9.TabIndex = 8
@@ -260,9 +264,11 @@ Partial Class Form1
         '
         'NumericUpDown10
         '
+        Me.NumericUpDown10.DecimalPlaces = 1
+        Me.NumericUpDown10.Increment = New Decimal(New Integer() {5, 0, 0, 65536})
         Me.NumericUpDown10.Location = New System.Drawing.Point(47, 84)
-        Me.NumericUpDown10.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
-        Me.NumericUpDown10.Minimum = New Decimal(New Integer() {5, 0, 0, -2147483648})
+        Me.NumericUpDown10.Maximum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumericUpDown10.Minimum = New Decimal(New Integer() {1, 0, 0, -2147483648})
         Me.NumericUpDown10.Name = "NumericUpDown10"
         Me.NumericUpDown10.Size = New System.Drawing.Size(42, 20)
         Me.NumericUpDown10.TabIndex = 9
@@ -318,6 +324,15 @@ Partial Class Form1
         Me.GroupBox5.TabStop = False
         Me.GroupBox5.Text = "Illumination && Shading"
         '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(160, 230)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(65, 29)
+        Me.Button1.TabIndex = 37
+        Me.Button1.Text = "Set"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'Label26
         '
         Me.Label26.AutoSize = True
@@ -348,8 +363,7 @@ Partial Class Form1
         'NumericUpDown19
         '
         Me.NumericUpDown19.Location = New System.Drawing.Point(26, 236)
-        Me.NumericUpDown19.Maximum = New Decimal(New Integer() {500, 0, 0, 0})
-        Me.NumericUpDown19.Minimum = New Decimal(New Integer() {500, 0, 0, -2147483648})
+        Me.NumericUpDown19.Minimum = New Decimal(New Integer() {100, 0, 0, -2147483648})
         Me.NumericUpDown19.Name = "NumericUpDown19"
         Me.NumericUpDown19.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown19.TabIndex = 35
@@ -367,8 +381,7 @@ Partial Class Form1
         'NumericUpDown18
         '
         Me.NumericUpDown18.Location = New System.Drawing.Point(26, 202)
-        Me.NumericUpDown18.Maximum = New Decimal(New Integer() {300, 0, 0, 0})
-        Me.NumericUpDown18.Minimum = New Decimal(New Integer() {300, 0, 0, -2147483648})
+        Me.NumericUpDown18.Minimum = New Decimal(New Integer() {100, 0, 0, -2147483648})
         Me.NumericUpDown18.Name = "NumericUpDown18"
         Me.NumericUpDown18.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown18.TabIndex = 34
@@ -377,8 +390,7 @@ Partial Class Form1
         'NumericUpDown17
         '
         Me.NumericUpDown17.Location = New System.Drawing.Point(26, 171)
-        Me.NumericUpDown17.Maximum = New Decimal(New Integer() {300, 0, 0, 0})
-        Me.NumericUpDown17.Minimum = New Decimal(New Integer() {300, 0, 0, -2147483648})
+        Me.NumericUpDown17.Minimum = New Decimal(New Integer() {100, 0, 0, -2147483648})
         Me.NumericUpDown17.Name = "NumericUpDown17"
         Me.NumericUpDown17.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown17.TabIndex = 33
@@ -537,15 +549,6 @@ Partial Class Form1
         Me.NumericUpDown11.Size = New System.Drawing.Size(45, 20)
         Me.NumericUpDown11.TabIndex = 17
         Me.NumericUpDown11.Value = New Decimal(New Integer() {5, 0, 0, 65536})
-        '
-        'Button1
-        '
-        Me.Button1.Location = New System.Drawing.Point(160, 230)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(65, 29)
-        Me.Button1.TabIndex = 37
-        Me.Button1.Text = "Set"
-        Me.Button1.UseVisualStyleBackColor = True
         '
         'Form1
         '

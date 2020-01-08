@@ -8,7 +8,7 @@
     Friend viewer As Vector3D
     Public centerX, centerY, centerZ As Integer
     Dim rX, rY, rZ As Integer
-    Dim tX, tY, tZ As Integer
+    Dim tX, tY, tZ As Double
     Public ka, ia, kd, ks, il As Double
     Public specExp As Integer
 
@@ -20,7 +20,7 @@
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         bmp = New Bitmap(PictureBox1.Width, PictureBox1.Height)
         img = Graphics.FromImage(bmp)
-        viewer = New Vector3D(0.0, 0.0, 10.0)
+        viewer = MultiplyWithMatrix(New Vector3D(0.0, 0.0, 1.0), sMatrix)
         lightSource = New Vector3D(CDbl(NumericUpDown17.Text), CDbl(NumericUpDown18.Text), CDbl(NumericUpDown19.Text))
         lightSource = MultiplyWithMatrix(lightSource, sMatrix)
         centerX = PictureBox1.Width / 2
@@ -74,9 +74,9 @@
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        tX = CInt(NumericUpDown8.Text)
-        tY = CInt(NumericUpDown9.Text)
-        tZ = CInt(NumericUpDown10.Text)
+        tX = CDbl(NumericUpDown8.Text)
+        tY = CDbl(NumericUpDown9.Text)
+        tZ = CDbl(NumericUpDown10.Text)
 
         torus.center.x += tX
         torus.center.y += tY
